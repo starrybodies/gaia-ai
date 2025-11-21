@@ -62,15 +62,23 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
-              <button className="px-6 py-3 bg-black border-2 border-matrix-green text-matrix-green hover:bg-matrix-green hover:text-black transition-all font-mono text-sm uppercase tracking-wider relative group">
+              <a
+                href="/demo"
+                className="px-6 py-3 bg-black border-2 border-matrix-green text-matrix-green hover:bg-matrix-green hover:text-black transition-all font-mono text-sm uppercase tracking-wider relative group text-center"
+              >
                 <span className="relative z-10">
                   &gt; LAUNCH_DASHBOARD.EXE
                 </span>
                 <div className="absolute inset-0 box-glow-green opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              </button>
-              <button className="px-6 py-3 bg-black border-2 border-neon-cyan text-neon-cyan hover:bg-neon-cyan hover:text-black transition-all font-mono text-sm uppercase tracking-wider">
+              </a>
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3 bg-black border-2 border-neon-cyan text-neon-cyan hover:bg-neon-cyan hover:text-black transition-all font-mono text-sm uppercase tracking-wider text-center"
+              >
                 &gt; VIEW_SOURCE.GIT
-              </button>
+              </a>
             </div>
 
             {/* Stats Grid */}
