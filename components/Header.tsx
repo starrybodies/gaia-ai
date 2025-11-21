@@ -1,59 +1,62 @@
 export default function Header() {
   return (
-    <header className="border-b border-border/50 backdrop-blur-sm sticky top-0 z-50">
+    <header className="border-b-2 border-matrix bg-black relative z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-plant-green to-forest-green flex items-center justify-center">
-              <span className="text-2xl">🌍</span>
+        <div className="flex justify-between items-center py-3">
+          {/* Logo - Terminal style */}
+          <div className="flex items-center gap-3 font-mono">
+            <div className="w-8 h-8 border-2 border-matrix-green bg-black flex items-center justify-center relative">
+              <span className="text-matrix-green text-lg">█</span>
+              <div className="absolute inset-0 border border-matrix-green animate-ping opacity-20"></div>
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight">
-                <span className="text-plant-green">GAIA</span>
-                <span className="text-foreground"> AI</span>
+              <h1 className="text-lg font-bold tracking-wider glow-green">
+                <span className="text-matrix-green">GAIA.AI</span>
               </h1>
-              <p className="text-xs text-muted-foreground font-mono">
-                Earth Intelligence Platform
+              <p className="text-[8px] text-terminal-gray uppercase tracking-widest">
+                EARTH_INTELLIGENCE_SYS
               </p>
             </div>
           </div>
 
-          {/* Navigation */}
-          <nav className="hidden md:flex items-center gap-6">
-            <a
-              href="#about"
-              className="text-sm text-muted-foreground hover:text-plant-green transition-colors"
-            >
-              About
-            </a>
-            <a
-              href="#features"
-              className="text-sm text-muted-foreground hover:text-plant-green transition-colors"
-            >
-              Features
-            </a>
-            <a
-              href="#data"
-              className="text-sm text-muted-foreground hover:text-plant-green transition-colors"
-            >
-              Data Sources
-            </a>
-            <a
-              href="https://github.com/yourusername/gaia-ai"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-muted-foreground hover:text-cyber-cyan transition-colors"
-            >
-              GitHub
-            </a>
+          {/* Navigation - Command line style */}
+          <nav className="hidden md:flex items-center gap-1">
+            {[
+              { label: "[ABOUT]", href: "#about" },
+              { label: "[MODULES]", href: "#features" },
+              { label: "[DATA]", href: "#data" },
+              { label: "[SRC]", href: "https://github.com" },
+            ].map((item, i) => (
+              <a
+                key={i}
+                href={item.href}
+                className="px-3 py-1 text-xs text-terminal-gray hover:text-matrix-green hover:bg-terminal-dark border border-transparent hover:border-matrix-green transition-all uppercase tracking-wider"
+              >
+                {item.label}
+              </a>
+            ))}
           </nav>
 
-          {/* CTA */}
-          <div className="flex items-center gap-3">
-            <button className="px-4 py-2 bg-plant-green hover:bg-forest-green text-background font-medium rounded-lg transition-all hover:shadow-lg hover:shadow-plant-green/20">
-              Get Started
+          {/* CTA - Terminal button */}
+          <div className="flex items-center gap-2">
+            <button className="px-4 py-2 bg-black border-2 border-matrix-green text-matrix-green hover:bg-matrix-green hover:text-black transition-all font-mono text-xs uppercase tracking-wider relative group">
+              <span className="relative z-10">&gt; INIT_SYSTEM</span>
+              <div className="absolute inset-0 bg-matrix-green opacity-0 group-hover:opacity-10 transition-opacity"></div>
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Status bar at bottom of header */}
+      <div className="border-t border-matrix-green/30 bg-terminal-dark">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1 flex justify-between items-center text-[9px] text-terminal-gray uppercase tracking-widest">
+          <div className="flex gap-4">
+            <span>SYS: ONLINE</span>
+            <span className="text-matrix-green">█ CONNECTED</span>
+          </div>
+          <div className="flex gap-4">
+            <span>DATA: 5 SOURCES</span>
+            <span>STATUS: ALPHA</span>
           </div>
         </div>
       </div>

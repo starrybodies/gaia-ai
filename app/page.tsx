@@ -1,244 +1,376 @@
 export default function Home() {
   return (
-    <div className="bg-gradient-solarpunk">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
-          <div className="text-center">
-            {/* Animated badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-plant-green/30 bg-card-bg/50 backdrop-blur-sm mb-8">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-plant-green opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-plant-green"></span>
-              </span>
-              <span className="text-sm text-muted-foreground font-mono">
-                Alpha Release • Open Source
-              </span>
+    <div className="bg-black min-h-screen">
+      {/* Hero Section - Terminal Boot Sequence */}
+      <section className="relative overflow-hidden py-20 sm:py-32">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Main terminal window */}
+          <div className="terminal-window p-8 mb-8">
+            <div className="window-header mb-6">
+              <span className="text-matrix-green">[SYSTEM_INIT]</span>
+              <div className="window-controls">
+                <div className="window-control"></div>
+                <div className="window-control"></div>
+                <div className="window-control"></div>
+              </div>
+            </div>
+
+            {/* Boot sequence */}
+            <div className="font-mono text-xs sm:text-sm space-y-2 mb-8 text-terminal-gray">
+              <div>
+                <span className="text-matrix-green">&gt;</span> INITIALIZING
+                GAIA.AI ENVIRONMENTAL INTELLIGENCE SYSTEM...
+              </div>
+              <div>
+                <span className="text-matrix-green">&gt;</span> LOADING DATA
+                SOURCES... <span className="text-neon-cyan">[OK]</span>
+              </div>
+              <div>
+                <span className="text-matrix-green">&gt;</span> CONNECTING TO
+                EARTH OBSERVATION NETWORKS...{" "}
+                <span className="text-neon-cyan">[OK]</span>
+              </div>
+              <div>
+                <span className="text-matrix-green">&gt;</span> AI SYSTEMS
+                ONLINE... <span className="text-neon-cyan">[OK]</span>
+              </div>
             </div>
 
             {/* Main heading */}
-            <h1 className="text-5xl sm:text-7xl font-bold tracking-tight mb-6">
-              Earth&apos;s Intelligence,
-              <br />
-              <span className="glow-green text-plant-green">
-                Universally Accessible
+            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6 font-mono">
+              <span className="text-matrix-green glow-green">
+                EARTH_INTELLIGENCE
               </span>
+              <br />
+              <span className="text-neon-cyan glow-cyan">
+                UNIVERSALLY_ACCESSIBLE
+              </span>
+              <span className="cursor"></span>
             </h1>
 
-            {/* Subheading */}
-            <p className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed">
-              A comprehensive environmental data platform powered by AI.
-              Monitor climate, weather, air quality, biodiversity, and more
-              through customizable dashboards and natural language queries.
-            </p>
+            {/* Description */}
+            <div className="text-sm sm:text-base text-terminal-gray max-w-3xl mb-8 font-mono leading-relaxed">
+              <span className="text-matrix-green">&gt;</span> COMPREHENSIVE
+              ENVIRONMENTAL DATA PLATFORM
+              <br />
+              <span className="text-matrix-green">&gt;</span> AI-POWERED QUERY
+              INTERFACE + MODULAR DASHBOARDS
+              <br />
+              <span className="text-matrix-green">&gt;</span> REAL-TIME
+              MONITORING: CLIMATE | WEATHER | AIR_QUALITY | BIODIVERSITY
+            </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-              <button className="w-full sm:w-auto px-8 py-4 bg-plant-green hover:bg-forest-green text-background font-semibold rounded-lg transition-all hover:shadow-2xl hover:shadow-plant-green/30 hover:scale-105">
-                Launch Dashboard
+            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+              <button className="px-6 py-3 bg-black border-2 border-matrix-green text-matrix-green hover:bg-matrix-green hover:text-black transition-all font-mono text-sm uppercase tracking-wider relative group">
+                <span className="relative z-10">
+                  &gt; LAUNCH_DASHBOARD.EXE
+                </span>
+                <div className="absolute inset-0 box-glow-green opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </button>
-              <button className="w-full sm:w-auto px-8 py-4 border border-cyber-cyan text-cyber-cyan hover:bg-cyber-cyan/10 font-semibold rounded-lg transition-all">
-                View on GitHub
+              <button className="px-6 py-3 bg-black border-2 border-neon-cyan text-neon-cyan hover:bg-neon-cyan hover:text-black transition-all font-mono text-sm uppercase tracking-wider">
+                &gt; VIEW_SOURCE.GIT
               </button>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
-                { label: "Data Sources", value: "5+", color: "plant-green" },
                 {
-                  label: "Environmental Metrics",
-                  value: "100+",
-                  color: "cyber-cyan",
+                  label: "DATA_SOURCES",
+                  value: "05+",
+                  color: "matrix-green",
                 },
-                { label: "Real-time Updates", value: "24/7", color: "solar-gold" },
-                { label: "Open Source", value: "MIT", color: "electric-lime" },
+                {
+                  label: "METRICS",
+                  value: "100+",
+                  color: "neon-cyan",
+                },
+                {
+                  label: "UPTIME",
+                  value: "24/7",
+                  color: "neon-blue",
+                },
+                {
+                  label: "LICENSE",
+                  value: "MIT",
+                  color: "neon-magenta",
+                },
               ].map((stat, i) => (
-                <div key={i} className="text-center">
+                <div
+                  key={i}
+                  className="border border-matrix-green/40 bg-terminal-dark p-3 hover:border-matrix-green hover:box-glow-green transition-all"
+                >
                   <div
-                    className={`text-3xl sm:text-4xl font-bold mb-2 text-${stat.color}`}
+                    className={`text-2xl sm:text-3xl font-bold mb-1 text-${stat.color} font-mono`}
                   >
                     {stat.value}
                   </div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-[10px] text-terminal-gray uppercase tracking-wider">
                     {stat.label}
                   </div>
                 </div>
               ))}
             </div>
           </div>
+
+          {/* Status indicator */}
+          <div className="flex items-center justify-center gap-2 text-xs text-terminal-gray uppercase tracking-widest">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-matrix-green opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-matrix-green"></span>
+            </span>
+            <span>ALPHA_v0.1.0 • OPEN_SOURCE • DECENTRALIZED</span>
+          </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 bg-gradient-earth">
+      {/* System Modules Section */}
+      <section id="features" className="py-20 bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">
-              <span className="text-solar-gold">Powerful</span> Features
+          {/* Section header */}
+          <div className="terminal-window p-6 mb-8">
+            <div className="window-header mb-4">
+              <span className="text-neon-cyan">[SYSTEM_MODULES]</span>
+            </div>
+            <h2 className="text-3xl font-bold font-mono text-matrix-green">
+              &gt; CORE_CAPABILITIES
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to understand Earth&apos;s environmental
-              systems in one place
+            <p className="text-sm text-terminal-gray mt-2 font-mono">
+              MODULAR ARCHITECTURE FOR COMPREHENSIVE EARTH MONITORING
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Modules grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               {
-                icon: "🤖",
-                title: "AI-Powered Queries",
-                description:
-                  "Ask questions in natural language. Our AI interprets your intent and generates contextual visualizations from the right data sources.",
-                color: "plant-green",
+                id: "MODULE_01",
+                title: "AI_QUERY_ENGINE",
+                desc: "Natural language processing for environmental data queries. AI interprets intent and generates contextual visualizations.",
+                color: "matrix-green",
+                icon: "▲",
               },
               {
-                icon: "📊",
-                title: "Modular Dashboards",
-                description:
-                  "Build custom dashboards with drag-and-drop widgets. Save and share your configurations with the community.",
-                color: "cyber-cyan",
+                id: "MODULE_02",
+                title: "DASHBOARD_BUILDER",
+                desc: "Modular widget system with drag-and-drop. Build custom interfaces, save configurations, share with network.",
+                color: "neon-cyan",
+                icon: "◆",
               },
               {
-                icon: "🌐",
-                title: "Earth's Vital Signs",
-                description:
-                  "Mission control view showing real-time global environmental metrics with historical context and trend analysis.",
-                color: "solar-gold",
-              },
-              {
-                icon: "📈",
-                title: "Advanced Visualization",
-                description:
-                  "Interactive charts, 3D globes, heatmaps, and geospatial overlays. Export visualizations for reports and presentations.",
+                id: "MODULE_03",
+                title: "EARTH_VITALS",
+                desc: "Mission control view of global environmental metrics. Real-time data with historical context and trend analysis.",
                 color: "neon-blue",
+                icon: "●",
               },
               {
-                icon: "🔗",
-                title: "Multi-Source Integration",
-                description:
-                  "Unified access to NASA, NOAA, ESA, OpenAQ, Global Forest Watch, and more. All data properly attributed and transparent.",
-                color: "electric-lime",
+                id: "MODULE_04",
+                title: "VIZ_ENGINE",
+                desc: "Interactive charts, 3D globes, heatmaps, geospatial overlays. Export visualizations for analysis and reporting.",
+                color: "neon-magenta",
+                icon: "■",
               },
               {
-                icon: "🎓",
-                title: "Educational Context",
-                description:
-                  "Every metric explained. Ask 'What does this mean?' and get AI-powered educational responses with citations.",
-                color: "forest-green",
+                id: "MODULE_05",
+                title: "DATA_INTEGRATION",
+                desc: "Unified API layer for NASA, NOAA, ESA, OpenAQ, GFW and more. All data properly attributed and transparent.",
+                color: "neon-yellow",
+                icon: "◗",
               },
-            ].map((feature, i) => (
+              {
+                id: "MODULE_06",
+                title: "KNOWLEDGE_BASE",
+                desc: "Educational overlays and AI explanations. Every metric includes context, methodology, and citation generator.",
+                color: "matrix-green",
+                icon: "◉",
+              },
+            ].map((module, i) => (
               <div
                 key={i}
-                className="p-6 rounded-xl bg-card-bg border border-border hover:border-border-hover transition-all hover:shadow-lg group"
+                className="terminal-window p-6 hover:box-glow-green transition-all group"
               >
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className={`text-xl font-semibold mb-3 text-${feature.color}`}>
-                  {feature.title}
+                <div className="window-header mb-4">
+                  <span className={`text-${module.color}`}>[{module.id}]</span>
+                  <div className="window-controls">
+                    <div className="window-control"></div>
+                  </div>
+                </div>
+
+                <div
+                  className={`text-4xl mb-4 text-${module.color} font-mono`}
+                >
+                  {module.icon}
+                </div>
+
+                <h3
+                  className={`text-base font-bold mb-3 text-${module.color} uppercase tracking-wider font-mono`}
+                >
+                  {module.title}
                 </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  {feature.description}
+
+                <p className="text-xs text-terminal-gray leading-relaxed font-mono">
+                  {module.desc}
                 </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Data Sources Section */}
-      <section id="data" className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">
-              <span className="text-cyber-cyan">Trusted</span> Data Sources
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              We integrate with the world&apos;s leading environmental data
-              providers
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {[
-              "NASA EOSDIS",
-              "NOAA",
-              "OpenAQ",
-              "Global Forest Watch",
-              "Copernicus",
-              "Planet Labs",
-              "Google Earth Engine",
-              "Microsoft Planetary",
-              "Climate TRACE",
-              "OpenWeatherMap",
-            ].map((source, i) => (
-              <div
-                key={i}
-                className="p-4 rounded-lg bg-card-bg border border-border hover:border-plant-green/50 transition-all text-center group"
-              >
-                <div className="text-sm font-mono text-muted-foreground group-hover:text-plant-green transition-colors">
-                  {source}
+                <div className="mt-4 text-[10px] text-terminal-gray">
+                  STATUS:{" "}
+                  <span className={`text-${module.color}`}>OPERATIONAL</span>
                 </div>
               </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="mt-12 text-center">
-            <p className="text-sm text-muted-foreground font-mono">
-              + Many more governmental and NGO databases worldwide
+      {/* Data Sources Terminal */}
+      <section id="data" className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="terminal-window p-8">
+            <div className="window-header mb-6">
+              <span className="text-neon-cyan">[DATA_SOURCES]</span>
+              <div className="window-controls">
+                <div className="window-control"></div>
+                <div className="window-control"></div>
+                <div className="window-control"></div>
+              </div>
+            </div>
+
+            <h2 className="text-3xl font-bold mb-4 text-matrix-green font-mono">
+              &gt; INTEGRATED_NETWORKS
+            </h2>
+            <p className="text-sm text-terminal-gray mb-8 font-mono">
+              DIRECT CONNECTION TO WORLD&apos;S LEADING ENVIRONMENTAL DATA
+              PROVIDERS
             </p>
+
+            {/* Data source list */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-6">
+              {[
+                { name: "NASA_EOSDIS", status: "CONNECTED" },
+                { name: "NOAA_CDO", status: "CONNECTED" },
+                { name: "OPENAQ", status: "CONNECTED" },
+                { name: "GFW_API", status: "CONNECTED" },
+                { name: "COPERNICUS", status: "READY" },
+                { name: "PLANET_LABS", status: "READY" },
+                { name: "GOOGLE_EE", status: "READY" },
+                { name: "MSFT_PLANETARY", status: "READY" },
+                { name: "CLIMATE_TRACE", status: "READY" },
+                { name: "OPENWEATHER", status: "CONNECTED" },
+                { name: "SENTINEL_HUB", status: "READY" },
+                { name: "GBIF", status: "READY" },
+              ].map((source, i) => (
+                <div
+                  key={i}
+                  className="border border-matrix-green/40 bg-terminal-dark p-3 hover:border-matrix-green transition-all font-mono group"
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-terminal-gray group-hover:text-matrix-green transition-colors">
+                      {source.name}
+                    </span>
+                    <span
+                      className={`text-[10px] ${
+                        source.status === "CONNECTED"
+                          ? "text-matrix-green"
+                          : "text-neon-cyan"
+                      }`}
+                    >
+                      [{source.status}]
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Additional info */}
+            <div className="border-t border-matrix-green/30 pt-6">
+              <div className="text-xs text-terminal-gray font-mono">
+                <span className="text-matrix-green">&gt;</span> EXPANDING
+                NETWORK: +20 GOVERNMENTAL AND NGO DATABASES
+                <br />
+                <span className="text-matrix-green">&gt;</span> ALL DATA:
+                ATTRIBUTED • TRANSPARENT • TRACEABLE
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* About Section */}
-      <section id="about" className="py-20 bg-gradient-earth">
+      {/* About Terminal */}
+      <section id="about" className="py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">
-              <span className="text-plant-green">Solarpunk</span> Technology
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              For a regenerative future
-            </p>
-          </div>
+          <div className="terminal-window p-8">
+            <div className="window-header mb-6">
+              <span className="text-neon-magenta">[SYSTEM_INFO]</span>
+              <div className="window-controls">
+                <div className="window-control"></div>
+                <div className="window-control"></div>
+              </div>
+            </div>
 
-          <div className="prose prose-invert max-w-none">
-            <div className="bg-card-bg rounded-xl p-8 border border-border">
-              <p className="text-muted-foreground leading-relaxed mb-4">
-                GAIA AI is built on the principles of{" "}
-                <span className="text-plant-green font-semibold">
-                  radical transparency
+            <h2 className="text-3xl font-bold mb-6 text-matrix-green font-mono">
+              &gt; CYPHERPUNK_MANIFESTO
+            </h2>
+
+            <div className="space-y-4 text-sm text-terminal-gray font-mono leading-relaxed">
+              <p>
+                <span className="text-matrix-green">&gt;&gt;</span> GAIA.AI
+                OPERATES ON PRINCIPLES OF{" "}
+                <span className="text-matrix-green glow-green">
+                  RADICAL_TRANSPARENCY
                 </span>
                 ,{" "}
-                <span className="text-cyber-cyan font-semibold">
-                  decentralization
+                <span className="text-neon-cyan glow-cyan">
+                  DECENTRALIZATION
                 </span>
-                , and{" "}
-                <span className="text-solar-gold font-semibold">
-                  universal access
+                , AND{" "}
+                <span className="text-neon-blue glow-blue">
+                  UNIVERSAL_ACCESS
                 </span>
-                . We believe that environmental data should be accessible to
-                everyone—from concerned citizens to researchers, from climate
-                activists to policymakers.
               </p>
-              <p className="text-muted-foreground leading-relaxed mb-4">
-                Our platform combines the <strong>simplicity of web1</strong>{" "}
-                (fast, functional, accessible), the{" "}
-                <strong>polish of web2</strong> (beautiful, intuitive), and the{" "}
-                <strong>values of web4</strong> (open, interoperable,
-                user-controlled).
+
+              <p>
+                <span className="text-matrix-green">&gt;&gt;</span>{" "}
+                ENVIRONMENTAL DATA MUST BE ACCESSIBLE TO ALL: CITIZENS •
+                RESEARCHERS • ACTIVISTS • POLICYMAKERS • ENGINEERS
               </p>
-              <p className="text-muted-foreground leading-relaxed">
-                Join us in building a tool that empowers humanity to understand
-                and protect our living planet. 🌍
+
+              <p>
+                <span className="text-matrix-green">&gt;&gt;</span> WEB1
+                SIMPLICITY [FAST, FUNCTIONAL, ACCESSIBLE]
+                <br />
+                <span className="text-matrix-green">&gt;&gt;</span> WEB2 POLISH
+                [BEAUTIFUL, INTUITIVE, POWERFUL]
+                <br />
+                <span className="text-matrix-green">&gt;&gt;</span> WEB4 VALUES
+                [OPEN, INTEROPERABLE, USER-CONTROLLED]
+              </p>
+
+              <div className="border border-matrix-green/40 bg-terminal-dark p-4 my-4">
+                <div className="text-xs text-matrix-green mb-2 uppercase tracking-widest">
+                  [MISSION_STATEMENT]
+                </div>
+                <p className="text-neon-cyan">
+                  BUILD TOOLS THAT EMPOWER HUMANITY TO UNDERSTAND AND PROTECT
+                  OUR LIVING PLANET. DATA_LEGIBILITY = ENVIRONMENTAL_AGENCY.
+                </p>
+              </div>
+
+              <p>
+                <span className="text-matrix-green">&gt;&gt;</span> JOIN THE
+                NETWORK. CONTRIBUTE CODE. SHARE DATA. BUILD THE FUTURE.
               </p>
             </div>
-          </div>
 
-          <div className="mt-12 text-center">
-            <button className="px-8 py-4 bg-gradient-to-r from-plant-green to-forest-green hover:from-forest-green hover:to-plant-green text-background font-semibold rounded-lg transition-all hover:shadow-2xl hover:shadow-plant-green/30 hover:scale-105">
-              Start Exploring Earth&apos;s Data
-            </button>
+            <div className="mt-8 flex gap-4">
+              <button className="flex-1 px-6 py-3 bg-black border-2 border-matrix-green text-matrix-green hover:bg-matrix-green hover:text-black transition-all font-mono text-sm uppercase tracking-wider">
+                &gt; EXPLORE_SYSTEM.EXE
+              </button>
+              <button className="flex-1 px-6 py-3 bg-black border-2 border-neon-cyan text-neon-cyan hover:bg-neon-cyan hover:text-black transition-all font-mono text-sm uppercase tracking-wider">
+                &gt; JOIN_NETWORK.EXE
+              </button>
+            </div>
           </div>
         </div>
       </section>
