@@ -2,6 +2,7 @@ import WeatherWidget from "@/components/WeatherWidget";
 import AirQualityWidget from "@/components/AirQualityWidget";
 import ClimateWidget from "@/components/ClimateWidget";
 import BiodiversityWidget from "@/components/BiodiversityWidget";
+import OceanWidget from "@/components/OceanWidget";
 
 export default function DemoPage() {
   return (
@@ -45,6 +46,9 @@ export default function DemoPage() {
               <span className="text-blue">&gt;</span> CONNECTING GBIF_API... <span className="text-white">[OK]</span>
             </div>
             <div>
+              <span className="text-blue">&gt;</span> CONNECTING NOAA_NDBC_API... <span className="text-white">[OK]</span>
+            </div>
+            <div>
               <span className="text-blue">&gt;</span> LOADING VISUALIZATION_ENGINE... <span className="text-white">[OK]</span>
             </div>
             <div>
@@ -72,23 +76,28 @@ export default function DemoPage() {
           <BiodiversityWidget />
         </div>
 
+        {/* Ocean widget - full width */}
+        <div className="mb-8">
+          <OceanWidget />
+        </div>
+
         {/* Module info */}
         <div className="border border-white bg-terminal p-6">
           <div className="text-xs text-white-dim font-mono space-y-2">
             <div>
-              <span className="text-blue">&gt;&gt;</span> ACTIVE_MODULES: WEATHER + AIR_QUALITY + CLIMATE + BIODIVERSITY [OPERATIONAL]
+              <span className="text-blue">&gt;&gt;</span> ACTIVE_MODULES: WEATHER + AIR_QUALITY + CLIMATE + BIODIVERSITY + OCEAN [OPERATIONAL]
             </div>
             <div>
-              <span className="text-blue">&gt;&gt;</span> DATA_SOURCES: OPENWEATHERMAP • OPENAQ • NOAA_CDO • GBIF
+              <span className="text-blue">&gt;&gt;</span> DATA_SOURCES: OPENWEATHERMAP • OPENAQ • NOAA_CDO • GBIF • NOAA_NDBC
             </div>
             <div>
               <span className="text-blue">&gt;&gt;</span> UPDATE_FREQUENCY: REAL-TIME (ON-DEMAND)
             </div>
             <div>
-              <span className="text-blue">&gt;&gt;</span> COVERAGE: GLOBAL • 2+ BILLION SPECIES RECORDS • 100+ YEARS CLIMATE
+              <span className="text-blue">&gt;&gt;</span> COVERAGE: GLOBAL • 2B+ SPECIES • 100+ YEARS • OCEAN BUOYS
             </div>
             <div className="pt-2 border-t border-white mt-2">
-              <span className="text-white">&gt;&gt;</span> COMING_SOON: OCEAN_METRICS | SATELLITE_IMAGERY | SOIL_DATA | CARBON_TRACKING
+              <span className="text-white">&gt;&gt;</span> COMING_SOON: SATELLITE_IMAGERY | SOIL_DATA | CARBON_TRACKING | DEFORESTATION
             </div>
           </div>
         </div>
