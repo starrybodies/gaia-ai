@@ -1,5 +1,6 @@
 import WeatherWidget from "@/components/WeatherWidget";
 import AirQualityWidget from "@/components/AirQualityWidget";
+import ClimateWidget from "@/components/ClimateWidget";
 
 export default function DemoPage() {
   return (
@@ -37,6 +38,9 @@ export default function DemoPage() {
               <span className="text-blue">&gt;</span> CONNECTING OPENAQ_API... <span className="text-white">[OK]</span>
             </div>
             <div>
+              <span className="text-blue">&gt;</span> CONNECTING NOAA_CDO_API... <span className="text-white">[OK]</span>
+            </div>
+            <div>
               <span className="text-blue">&gt;</span> LOADING VISUALIZATION_ENGINE... <span className="text-white">[OK]</span>
             </div>
             <div>
@@ -54,23 +58,28 @@ export default function DemoPage() {
           <AirQualityWidget />
         </div>
 
+        {/* Climate widget - full width */}
+        <div className="mb-8">
+          <ClimateWidget />
+        </div>
+
         {/* Module info */}
         <div className="border border-white bg-terminal p-6">
           <div className="text-xs text-white-dim font-mono space-y-2">
             <div>
-              <span className="text-blue">&gt;&gt;</span> ACTIVE_MODULES: WEATHER + AIR_QUALITY [OPERATIONAL]
+              <span className="text-blue">&gt;&gt;</span> ACTIVE_MODULES: WEATHER + AIR_QUALITY + CLIMATE [OPERATIONAL]
             </div>
             <div>
-              <span className="text-blue">&gt;&gt;</span> DATA_SOURCES: OPENWEATHERMAP • OPENAQ
+              <span className="text-blue">&gt;&gt;</span> DATA_SOURCES: OPENWEATHERMAP • OPENAQ • NOAA_CDO
             </div>
             <div>
               <span className="text-blue">&gt;&gt;</span> UPDATE_FREQUENCY: 10_MINUTES (AUTO-REFRESH)
             </div>
             <div>
-              <span className="text-blue">&gt;&gt;</span> COVERAGE: GLOBAL • 10,000+ AIR QUALITY STATIONS
+              <span className="text-blue">&gt;&gt;</span> COVERAGE: GLOBAL • 10,000+ STATIONS • 100+ YEARS HISTORICAL
             </div>
             <div className="pt-2 border-t border-white mt-2">
-              <span className="text-white">&gt;&gt;</span> COMING_SOON: BIODIVERSITY | CLIMATE_DATA | OCEAN_METRICS | SATELLITE_IMAGERY
+              <span className="text-white">&gt;&gt;</span> COMING_SOON: BIODIVERSITY | OCEAN_METRICS | SATELLITE_IMAGERY | SOIL_DATA
             </div>
           </div>
         </div>
