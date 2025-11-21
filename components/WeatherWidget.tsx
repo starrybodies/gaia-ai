@@ -75,6 +75,19 @@ export default function WeatherWidget() {
         </div>
       </div>
 
+      {/* Demo mode banner */}
+      <div className="mb-4 border border-neon-yellow/40 bg-terminal-dark p-3">
+        <div className="flex items-center gap-2 text-neon-yellow text-xs font-mono">
+          <span className="animate-pulse">⚠</span>
+          <div>
+            <div className="font-bold uppercase">DEMO_MODE_ACTIVE</div>
+            <div className="text-[10px] text-terminal-gray">
+              API_KEY_PENDING_ACTIVATION • SHOWING_MOCK_DATA
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* City input */}
       <form onSubmit={handleCityChange} className="mb-6">
         <div className="flex gap-2">
