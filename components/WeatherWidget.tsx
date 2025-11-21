@@ -75,14 +75,14 @@ export default function WeatherWidget() {
         </div>
       </div>
 
-      {/* Demo mode banner */}
-      <div className="mb-4 border border-orange bg-code p-3">
-        <div className="flex items-center gap-2 text-orange text-xs font-mono">
-          <span className="animate-pulse">⚠</span>
+      {/* API status banner */}
+      <div className="mb-4 border border-blue bg-code p-3">
+        <div className="flex items-center gap-2 text-blue text-xs font-mono">
+          <span className="status-indicator status-active"></span>
           <div>
-            <div className="font-bold uppercase">DEMO_MODE_ACTIVE</div>
+            <div className="font-bold uppercase">OPEN_METEO_CONNECTED</div>
             <div className="text-[10px] text-white-dim">
-              API_KEY_PENDING • SHOWING_MOCK_DATA
+              REAL-TIME WEATHER • 7-DAY FORECAST • GLOBAL COVERAGE
             </div>
           </div>
         </div>
@@ -256,7 +256,7 @@ export default function WeatherWidget() {
           {/* Status bar */}
           <div className="mt-6 pt-4 border-t border-white flex justify-between text-[10px] text-white-dim uppercase tracking-widest">
             <div>
-              DATA_SOURCE: <span className="text-blue">OPENWEATHERMAP</span>
+              SOURCE: <span className="text-blue">OPEN_METEO</span>
             </div>
             <div>
               LAST_UPDATE:{" "}
