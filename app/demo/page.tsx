@@ -11,13 +11,25 @@ import CarbonWidget from "@/components/CarbonWidget";
 import SoilWidget from "@/components/SoilWidget";
 import DeforestationWidget from "@/components/DeforestationWidget";
 
-// Dynamically import DashboardLayout to avoid SSR issues with react-grid-layout
+// Dynamically import components that use browser APIs
 const DashboardLayout = dynamic(() => import("@/components/DashboardLayout"), {
   ssr: false,
   loading: () => (
     <div className="text-white-dim font-mono text-sm">
       <span className="text-blue">&gt;</span> LOADING_DASHBOARD_LAYOUT
       <span className="cursor"></span>
+    </div>
+  ),
+});
+
+const MapViewWidget = dynamic(() => import("@/components/MapViewWidget"), {
+  ssr: false,
+  loading: () => (
+    <div className="terminal-window p-6 h-[600px] flex items-center justify-center">
+      <div className="text-white-dim font-mono text-sm">
+        <span className="text-blue">&gt;</span> INITIALIZING_MAP_ENGINE
+        <span className="cursor"></span>
+      </div>
     </div>
   ),
 });
@@ -57,7 +69,7 @@ export default function DemoPage() {
             &gt; ENVIRONMENTAL_INTELLIGENCE_PLATFORM
           </h1>
           <p className="text-sm text-white-dim font-mono">
-            LOCATION: {DEFAULT_LOCATION.name.toUpperCase()} • 9 ACTIVE DATA MODULES • DRAG TO REARRANGE
+            LOCATION: {DEFAULT_LOCATION.name.toUpperCase()} • 10 ACTIVE DATA MODULES • DRAG TO REARRANGE
           </p>
         </div>
 
@@ -73,6 +85,9 @@ export default function DemoPage() {
           <div className="font-mono text-xs space-y-1 text-white-dim mt-4">
             <div>
               <span className="text-blue">&gt;</span> INITIALIZING GAIA_AI... <span className="text-white">[OK]</span>
+            </div>
+            <div>
+              <span className="text-blue">&gt;</span> LOADING GEOSPATIAL_ENGINE... <span className="text-white">[OK]</span>
             </div>
             <div>
               <span className="text-blue">&gt;</span> CONNECTING OPENWEATHERMAP_API... <span className="text-white">[OK]</span>
@@ -105,10 +120,20 @@ export default function DemoPage() {
               <span className="text-blue">&gt;</span> LOADING VISUALIZATION_ENGINE... <span className="text-white">[OK]</span>
             </div>
             <div className="text-blue pt-1">
-              <span className="text-blue">&gt;&gt;</span> ALL_SYSTEMS: OPERATIONAL • 9 MODULES ACTIVE
+              <span className="text-blue">&gt;&gt;</span> ALL_SYSTEMS: OPERATIONAL • 10 MODULES ACTIVE
             </div>
           </div>
         </details>
+
+        {/* Map View - Primary visualization */}
+        <div className="mb-8">
+          <MapViewWidget
+            defaultLocation={DEFAULT_LOCATION.name}
+            defaultLat={DEFAULT_LOCATION.lat}
+            defaultLon={DEFAULT_LOCATION.lon}
+            defaultZoom={11}
+          />
+        </div>
 
         {/* Dashboard with draggable widgets */}
         <DashboardLayout widgetIds={WIDGET_IDS}>
@@ -143,13 +168,13 @@ export default function DemoPage() {
         <div className="border border-white bg-terminal p-6 mt-8">
           <div className="text-xs text-white-dim font-mono space-y-2">
             <div>
-              <span className="text-blue">&gt;&gt;</span> ACTIVE_MODULES: 9/9 [ALL OPERATIONAL]
+              <span className="text-blue">&gt;&gt;</span> ACTIVE_MODULES: 10/10 [ALL OPERATIONAL]
             </div>
             <div>
-              <span className="text-blue">&gt;&gt;</span> WEATHER • AIR_QUALITY • CLIMATE • SATELLITE • CARBON
+              <span className="text-blue">&gt;&gt;</span> MAP_VIEW • WEATHER • AIR_QUALITY • CLIMATE • SATELLITE
             </div>
             <div>
-              <span className="text-blue">&gt;&gt;</span> SOIL • DEFORESTATION • BIODIVERSITY • OCEAN
+              <span className="text-blue">&gt;&gt;</span> CARBON • SOIL • DEFORESTATION • BIODIVERSITY • OCEAN
             </div>
             <div>
               <span className="text-blue">&gt;&gt;</span> DATA_SOURCES: 10+ APIs • GLOBAL COVERAGE • REAL-TIME
