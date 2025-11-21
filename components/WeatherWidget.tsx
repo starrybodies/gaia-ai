@@ -65,23 +65,24 @@ export default function WeatherWidget() {
   };
 
   return (
-    <div className="data-card p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h3 className="heading-tertiary mb-1">Weather & Climate</h3>
-          <p className="text-xs text-stone">Real-time atmospheric conditions</p>
+    <div className="terminal-window p-6">
+      <div className="window-header mb-6">
+        <span className="text-blue">[WEATHER_MODULE]</span>
+        <div className="window-controls">
+          <div className="window-control"></div>
+          <div className="window-control"></div>
+          <div className="window-control"></div>
         </div>
-        <span className="badge badge-primary text-[10px]">Live Data</span>
       </div>
 
       {/* Demo mode banner */}
-      <div className="mb-4 bg-warning/10 border border-warning rounded-lg p-3">
-        <div className="flex items-center gap-2 text-warning text-xs">
+      <div className="mb-4 border border-orange bg-code p-3">
+        <div className="flex items-center gap-2 text-orange text-xs font-mono">
           <span className="animate-pulse">⚠</span>
           <div>
-            <div className="font-semibold">Demo Mode Active</div>
-            <div className="text-[10px] text-stone">
-              API key pending activation • Showing mock data
+            <div className="font-bold uppercase">DEMO_MODE_ACTIVE</div>
+            <div className="text-[10px] text-white-dim">
+              API_KEY_PENDING • SHOWING_MOCK_DATA
             </div>
           </div>
         </div>
@@ -90,136 +91,135 @@ export default function WeatherWidget() {
       {/* City input */}
       <form onSubmit={handleCityChange} className="mb-6">
         <div className="flex gap-2">
-          <div className="flex-1 border border-border-strong bg-cream rounded-lg p-3 flex items-center hover:border-sky-blue transition-all">
+          <div className="flex-1 border border-white bg-code p-2 flex items-center">
+            <span className="text-blue mr-2">&gt;</span>
             <input
               type="text"
               name="city"
               defaultValue={city}
-              placeholder="Enter location..."
-              className="bg-transparent border-none outline-none text-charcoal text-sm flex-1 placeholder:text-stone"
+              placeholder="ENTER_LOCATION"
+              className="bg-transparent border-none outline-none text-white font-mono text-sm flex-1 uppercase tracking-wider placeholder:text-white-dim placeholder:opacity-50"
             />
           </div>
           <button
             type="submit"
-            className="btn btn-primary px-6"
+            className="px-4 py-2 border-2 border-blue text-blue hover:bg-blue hover:text-white transition-all font-mono text-xs uppercase tracking-wider"
           >
-            Search
+            QUERY
           </button>
         </div>
       </form>
 
       {loading && (
-        <div className="text-center py-8">
-          <div className="skeleton h-4 w-32 mx-auto"></div>
+        <div className="text-white-dim font-mono text-sm">
+          <span className="text-blue">&gt;</span> FETCHING_DATA<span className="cursor"></span>
         </div>
       )}
 
       {error && (
-        <div className="bg-error/10 border border-error rounded-lg p-4 text-error text-sm">
-          <span className="font-semibold">Error:</span> {error}
+        <div className="border border-white bg-code p-4 text-white font-mono text-sm">
+          <span>&gt;&gt; ERROR:</span> {error}
         </div>
       )}
 
       {weather && !loading && !error && (
         <>
           {/* Current weather */}
-          <div className="data-module mb-6">
-            <div className="flex justify-between items-start mb-6">
+          <div className="border border-white bg-code p-6 mb-6">
+            <div className="flex justify-between items-start mb-4">
               <div>
-                <h4 className="text-2xl font-bold text-charcoal mb-1">
+                <h3 className="text-2xl font-bold text-white uppercase tracking-wider mb-1">
                   {weather.location}, {weather.country}
-                </h4>
-                <div className="text-xs text-stone font-medium">
-                  Current Conditions
+                </h3>
+                <div className="text-xs text-white-dim uppercase tracking-widest">
+                  CURRENT_CONDITIONS
                 </div>
               </div>
               <div className="text-right">
-                <div className="metric-value text-5xl text-rust-orange">
-                  {weather.temp}°
+                <div className="text-4xl font-bold text-blue font-mono">
+                  {weather.temp}°C
                 </div>
-                <div className="text-xs text-stone">
-                  Feels like {weather.feelsLike}°C
+                <div className="text-xs text-white-dim">
+                  FEELS {weather.feelsLike}°C
                 </div>
               </div>
             </div>
 
-            <div className="text-sm text-stone mb-6 capitalize">
+            <div className="text-sm text-white-dim mb-4 uppercase tracking-wider">
               {weather.description}
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-cream rounded-lg p-4">
-                <div className="metric-label mb-1">Humidity</div>
-                <div className="metric-value text-2xl text-sky-blue">{weather.humidity}%</div>
+            <div className="grid grid-cols-3 gap-4 text-xs font-mono">
+              <div className="border border-white p-3">
+                <div className="text-white-dim uppercase mb-1">HUMIDITY</div>
+                <div className="text-white text-lg">{weather.humidity}%</div>
               </div>
-              <div className="bg-cream rounded-lg p-4">
-                <div className="metric-label mb-1">Wind Speed</div>
-                <div className="metric-value text-2xl text-sky-blue">{weather.windSpeed}</div>
-                <div className="metric-unit text-xs">km/h</div>
+              <div className="border border-white p-3">
+                <div className="text-white-dim uppercase mb-1">WIND</div>
+                <div className="text-white text-lg">{weather.windSpeed}km/h</div>
               </div>
-              <div className="bg-cream rounded-lg p-4">
-                <div className="metric-label mb-1">Pressure</div>
-                <div className="metric-value text-2xl text-sky-blue">{weather.pressure}</div>
-                <div className="metric-unit text-xs">hPa</div>
+              <div className="border border-white p-3">
+                <div className="text-white-dim uppercase mb-1">PRESSURE</div>
+                <div className="text-white text-lg">{weather.pressure}hPa</div>
               </div>
             </div>
           </div>
 
           {/* Chart */}
           {chartData.length > 0 && (
-            <div className="chart-container mb-6">
-              <div className="text-xs font-semibold text-stone uppercase tracking-wide mb-4">
-                24-Hour Forecast
+            <div className="border border-blue bg-code p-6 mb-6">
+              <div className="text-xs text-blue uppercase tracking-widest mb-4">
+                [24_HOUR_FORECAST]
               </div>
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={chartData}>
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke="#D4C5A9"
+                    stroke="rgba(255, 255, 255, 0.1)"
                   />
                   <XAxis
                     dataKey="time"
-                    stroke="#8B7E74"
+                    stroke="#E8E8E8"
                     style={{
-                      fontSize: "11px",
-                      fontFamily: "var(--font-geist-sans)",
-                      fill: "#8B7E74",
+                      fontSize: "10px",
+                      fontFamily: "monospace",
+                      fill: "#E8E8E8",
                     }}
                   />
                   <YAxis
-                    stroke="#8B7E74"
+                    stroke="#E8E8E8"
                     style={{
-                      fontSize: "11px",
-                      fontFamily: "var(--font-geist-sans)",
-                      fill: "#8B7E74",
+                      fontSize: "10px",
+                      fontFamily: "monospace",
+                      fill: "#E8E8E8",
                     }}
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#FFFFFF",
-                      border: "1px solid #D4C5A9",
-                      borderRadius: "8px",
-                      fontFamily: "var(--font-geist-sans)",
-                      fontSize: "12px",
-                      boxShadow: "0 2px 8px rgba(44, 36, 22, 0.1)",
+                      backgroundColor: "#A0451A",
+                      border: "1px solid #FFFFFF",
+                      borderRadius: "0",
+                      fontFamily: "monospace",
+                      fontSize: "11px",
                     }}
-                    labelStyle={{ color: "#3D3429", fontWeight: 600 }}
+                    labelStyle={{ color: "#FFFFFF" }}
+                    itemStyle={{ color: "#00A7E1" }}
                   />
                   <Line
                     type="monotone"
                     dataKey="temp"
-                    stroke="#CD5C5C"
+                    stroke="#00A7E1"
                     strokeWidth={2}
-                    dot={{ fill: "#CD5C5C", r: 4 }}
-                    name="Temperature (°C)"
+                    dot={{ fill: "#00A7E1", r: 3 }}
+                    name="TEMP (°C)"
                   />
                   <Line
                     type="monotone"
                     dataKey="humidity"
-                    stroke="#5B9BD5"
+                    stroke="#FFFFFF"
                     strokeWidth={2}
-                    dot={{ fill: "#5B9BD5", r: 4 }}
-                    name="Humidity (%)"
+                    dot={{ fill: "#FFFFFF", r: 3 }}
+                    name="HUMIDITY (%)"
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -228,23 +228,23 @@ export default function WeatherWidget() {
 
           {/* 5-day forecast */}
           {forecast.length > 0 && (
-            <div className="mb-6">
-              <div className="text-xs font-semibold text-stone uppercase tracking-wide mb-4">
-                5-Day Forecast
+            <div className="border border-white bg-code p-6">
+              <div className="text-xs text-white uppercase tracking-widest mb-4">
+                [5_DAY_FORECAST]
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                 {forecast.map((day, i) => (
                   <div
                     key={i}
-                    className="data-card p-4 text-center hover:border-sky-blue transition-all"
+                    className="border border-white p-3 hover:border-blue transition-all"
                   >
-                    <div className="text-xs text-stone mb-2 font-medium">
+                    <div className="text-[10px] text-white-dim uppercase mb-2 tracking-wider">
                       {day.datetime}
                     </div>
-                    <div className="metric-value text-2xl text-rust-orange mb-1">
-                      {day.temp}°
+                    <div className="text-lg font-bold text-blue mb-1">
+                      {day.temp}°C
                     </div>
-                    <div className="text-xs text-stone capitalize">
+                    <div className="text-[10px] text-white-dim uppercase">
                       {day.description}
                     </div>
                   </div>
@@ -253,14 +253,14 @@ export default function WeatherWidget() {
             </div>
           )}
 
-          {/* Metadata */}
-          <div className="pt-4 border-t border-border flex justify-between text-xs text-stone">
+          {/* Status bar */}
+          <div className="mt-6 pt-4 border-t border-white flex justify-between text-[10px] text-white-dim uppercase tracking-widest">
             <div>
-              Data source: <span className="text-charcoal font-semibold">OpenWeatherMap</span>
+              DATA_SOURCE: <span className="text-blue">OPENWEATHERMAP</span>
             </div>
             <div>
-              Updated:{" "}
-              <span className="text-charcoal font-semibold font-mono">
+              LAST_UPDATE:{" "}
+              <span className="text-blue">
                 {new Date(weather.timestamp * 1000).toLocaleTimeString()}
               </span>
             </div>
