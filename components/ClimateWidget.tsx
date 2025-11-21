@@ -19,7 +19,7 @@ export default function ClimateWidget() {
   const [climateData, setClimateData] = useState<ClimateData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [location, setLocation] = useState("San Francisco, CA");
+  const [location, setLocation] = useState("Salt Spring Island, BC");
 
   const fetchClimateData = async (locationName: string) => {
     setLoading(true);

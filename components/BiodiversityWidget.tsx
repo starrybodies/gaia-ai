@@ -20,8 +20,8 @@ export default function BiodiversityWidget() {
   const [bioData, setBioData] = useState<BiodiversityData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [location, setLocation] = useState("San Francisco, CA");
-  const [coordinates, setCoordinates] = useState({ lat: 37.7749, lon: -122.4194 });
+  const [location, setLocation] = useState("Salt Spring Island, BC");
+  const [coordinates, setCoordinates] = useState({ lat: 48.8167, lon: -123.5 });
 
   const fetchBiodiversityData = async (locationName: string, lat: number, lon: number) => {
     setLoading(true);

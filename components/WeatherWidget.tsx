@@ -23,7 +23,7 @@ export default function WeatherWidget() {
   const [chartData, setChartData] = useState<WeatherChartData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [city, setCity] = useState("San Francisco");
+  const [city, setCity] = useState("Salt Spring Island, BC");
 
   const fetchWeather = async (cityName: string) => {
     setLoading(true);

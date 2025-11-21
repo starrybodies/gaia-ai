@@ -7,7 +7,7 @@ export default function AirQualityWidget() {
   const [airQuality, setAirQuality] = useState<SimpleAirQuality | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [city, setCity] = useState("San Francisco");
+  const [city, setCity] = useState("Salt Spring Island, BC");
 
   const fetchAirQuality = async (cityName: string) => {
     setLoading(true);
