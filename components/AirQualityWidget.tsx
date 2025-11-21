@@ -2,6 +2,17 @@
 
 import { useEffect, useState } from "react";
 import type { SimpleAirQuality } from "@/types/airquality";
+import { Gauge, HorizontalBars } from "./visualizations";
+
+// WHO guidelines for pollutant limits (µg/m³)
+const WHO_LIMITS = {
+  pm25: 15,  // Annual mean
+  pm10: 45,  // Annual mean
+  o3: 100,   // 8-hour mean
+  no2: 25,   // Annual mean
+  so2: 40,   // 24-hour mean
+  co: 4,     // mg/m³ 24-hour mean
+};
 
 export default function AirQualityWidget() {
   const [airQuality, setAirQuality] = useState<SimpleAirQuality | null>(null);
@@ -45,15 +56,66 @@ export default function AirQualityWidget() {
     }
   };
 
-  // Get AQI color
-  const getAQIColor = (aqi: number) => {
-    if (aqi <= 50) return "blue";
-    if (aqi <= 100) return "white";
-    return "orange";
+  // AQI thresholds for gauge
+  const aqiThresholds = [
+    { value: 20, color: "#00A7E1" },  // Good - blue
+    { value: 40, color: "#98D8C8" },  // Fair - mint
+    { value: 60, color: "#E8E8E8" },  // Moderate - white
+    { value: 80, color: "#FFB347" },  // Poor - light orange
+    { value: 100, color: "#FF8C42" }, // Very Poor - orange
+  ];
+
+  // Prepare pollutant bar data
+  const getPollutantBars = () => {
+    if (!airQuality) return [];
+    const bars = [];
+
+    if (airQuality.measurements.pm25 !== undefined) {
+      bars.push({
+        label: "PM2.5",
+        value: airQuality.measurements.pm25,
+        max: WHO_LIMITS.pm25 * 3,
+        color: airQuality.measurements.pm25 > WHO_LIMITS.pm25 ? "#FF8C42" : "#00A7E1",
+      });
+    }
+    if (airQuality.measurements.pm10 !== undefined) {
+      bars.push({
+        label: "PM10",
+        value: airQuality.measurements.pm10,
+        max: WHO_LIMITS.pm10 * 3,
+        color: airQuality.measurements.pm10 > WHO_LIMITS.pm10 ? "#FF8C42" : "#00A7E1",
+      });
+    }
+    if (airQuality.measurements.o3 !== undefined) {
+      bars.push({
+        label: "O₃",
+        value: airQuality.measurements.o3,
+        max: WHO_LIMITS.o3 * 2,
+        color: airQuality.measurements.o3 > WHO_LIMITS.o3 ? "#FF8C42" : "#00A7E1",
+      });
+    }
+    if (airQuality.measurements.no2 !== undefined) {
+      bars.push({
+        label: "NO₂",
+        value: airQuality.measurements.no2,
+        max: WHO_LIMITS.no2 * 3,
+        color: airQuality.measurements.no2 > WHO_LIMITS.no2 ? "#FF8C42" : "#00A7E1",
+      });
+    }
+    if (airQuality.measurements.so2 !== undefined) {
+      bars.push({
+        label: "SO₂",
+        value: airQuality.measurements.so2,
+        max: WHO_LIMITS.so2 * 2,
+        color: airQuality.measurements.so2 > WHO_LIMITS.so2 ? "#FF8C42" : "#00A7E1",
+      });
+    }
+
+    return bars;
   };
 
   return (
-    <div className="terminal-window p-6">
+    <div className="terminal-window p-6 h-full">
       <div className="window-header mb-6">
         <span className="text-blue">[AIR_QUALITY_MODULE]</span>
         <div className="window-controls">
@@ -113,83 +175,53 @@ export default function AirQualityWidget() {
 
       {airQuality && !loading && !error && (
         <>
-          {/* AQI Display */}
+          {/* AQI Display with Gauge */}
           <div className="border border-white bg-code p-6 mb-6">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-2xl font-bold text-white uppercase tracking-wider mb-1">
-                  {airQuality.city}, {airQuality.country}
-                </h3>
-                <div className="text-xs text-white-dim uppercase tracking-widest">
-                  AIR_QUALITY_INDEX
-                </div>
+            <div className="flex items-start gap-6">
+              {/* Gauge */}
+              <div className="flex-shrink-0">
+                <Gauge
+                  value={airQuality.aqi}
+                  min={0}
+                  max={200}
+                  label={airQuality.aqiLevel.toUpperCase()}
+                  thresholds={aqiThresholds}
+                  size="md"
+                />
               </div>
-              <div className="text-right">
-                <div
-                  className={`text-4xl font-bold text-${getAQIColor(airQuality.aqi)} font-mono`}
-                >
-                  {airQuality.aqi}
+
+              {/* Location info */}
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-white uppercase tracking-wider mb-1">
+                  {airQuality.city}
+                </h3>
+                <div className="text-xs text-white-dim uppercase tracking-widest mb-3">
+                  {airQuality.country}
                 </div>
-                <div className="text-xs text-white-dim">{airQuality.aqiLevel.toUpperCase()}</div>
+                <div className="text-xs text-white-dim font-mono">
+                  <div className="mb-1">
+                    <span className="text-blue">&gt;</span> AQI_SCALE: 0-50 GOOD, 51-100 MODERATE
+                  </div>
+                  <div>
+                    <span className="text-blue">&gt;</span> 101-150 UNHEALTHY_SENSITIVE, 151+ UNHEALTHY
+                  </div>
+                </div>
               </div>
             </div>
+          </div>
 
-            {/* Pollutant Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs font-mono">
-              {airQuality.measurements.pm25 !== undefined && (
-                <div className="border border-white p-3">
-                  <div className="text-white-dim uppercase mb-1">PM2.5</div>
-                  <div className="text-white text-lg">
-                    {airQuality.measurements.pm25.toFixed(1)}
-                  </div>
-                  <div className="text-white-dim text-[10px]">µg/m³</div>
-                </div>
-              )}
-              {airQuality.measurements.pm10 !== undefined && (
-                <div className="border border-white p-3">
-                  <div className="text-white-dim uppercase mb-1">PM10</div>
-                  <div className="text-white text-lg">
-                    {airQuality.measurements.pm10.toFixed(1)}
-                  </div>
-                  <div className="text-white-dim text-[10px]">µg/m³</div>
-                </div>
-              )}
-              {airQuality.measurements.o3 !== undefined && (
-                <div className="border border-white p-3">
-                  <div className="text-white-dim uppercase mb-1">O₃</div>
-                  <div className="text-white text-lg">
-                    {airQuality.measurements.o3.toFixed(1)}
-                  </div>
-                  <div className="text-white-dim text-[10px]">µg/m³</div>
-                </div>
-              )}
-              {airQuality.measurements.no2 !== undefined && (
-                <div className="border border-white p-3">
-                  <div className="text-white-dim uppercase mb-1">NO₂</div>
-                  <div className="text-white text-lg">
-                    {airQuality.measurements.no2.toFixed(1)}
-                  </div>
-                  <div className="text-white-dim text-[10px]">µg/m³</div>
-                </div>
-              )}
-              {airQuality.measurements.so2 !== undefined && (
-                <div className="border border-white p-3">
-                  <div className="text-white-dim uppercase mb-1">SO₂</div>
-                  <div className="text-white text-lg">
-                    {airQuality.measurements.so2.toFixed(1)}
-                  </div>
-                  <div className="text-white-dim text-[10px]">µg/m³</div>
-                </div>
-              )}
-              {airQuality.measurements.co !== undefined && (
-                <div className="border border-white p-3">
-                  <div className="text-white-dim uppercase mb-1">CO</div>
-                  <div className="text-white text-lg">
-                    {airQuality.measurements.co.toFixed(2)}
-                  </div>
-                  <div className="text-white-dim text-[10px]">mg/m³</div>
-                </div>
-              )}
+          {/* Pollutant Levels with Bars */}
+          <div className="border border-white bg-code p-4 mb-6">
+            <div className="text-white-dim uppercase text-xs tracking-widest mb-4 font-mono">
+              <span className="text-blue">&gt;&gt;</span> POLLUTANT_LEVELS (µg/m³)
+            </div>
+            <HorizontalBars
+              data={getPollutantBars()}
+              showValues={true}
+              unit=" µg/m³"
+            />
+            <div className="mt-3 text-[10px] text-white-dim font-mono">
+              <span className="text-blue">BLUE</span> = WITHIN WHO LIMITS • <span className="text-orange">ORANGE</span> = EXCEEDS WHO LIMITS
             </div>
           </div>
 
@@ -197,16 +229,10 @@ export default function AirQualityWidget() {
           <div className="border border-blue bg-code p-4">
             <div className="text-xs text-white-dim font-mono space-y-1">
               <div>
-                <span className="text-blue">&gt;</span> WHAT_IS_AQI: Air Quality Index measures pollution levels (0-500 scale)
+                <span className="text-blue">&gt;</span> WHO_LIMITS: PM2.5 {WHO_LIMITS.pm25}µg/m³ • PM10 {WHO_LIMITS.pm10}µg/m³
               </div>
               <div>
-                <span className="text-blue">&gt;</span> GOOD (0-50): Air quality satisfactory, minimal health risk
-              </div>
-              <div>
-                <span className="text-blue">&gt;</span> MODERATE (51-100): Acceptable for most, sensitive groups may experience effects
-              </div>
-              <div>
-                <span className="text-blue">&gt;</span> UNHEALTHY (101+): Health effects for sensitive groups, public advised
+                <span className="text-blue">&gt;</span> O₃ {WHO_LIMITS.o3}µg/m³ • NO₂ {WHO_LIMITS.no2}µg/m³ • SO₂ {WHO_LIMITS.so2}µg/m³
               </div>
             </div>
           </div>

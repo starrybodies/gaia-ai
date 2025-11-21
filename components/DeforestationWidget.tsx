@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import type { DeforestationData } from "@/types/deforestation";
 import { getForestHealthRating, getTrendColor } from "@/lib/deforestation";
+import { Gauge, DonutChart, HorizontalBars } from "./visualizations";
 
 interface DeforestationWidgetProps {
   defaultLocation?: string;
@@ -55,8 +56,35 @@ export default function DeforestationWidget({
     "Forest Cover %": h.coverPercent,
   }));
 
+  // Forest cover thresholds for gauge
+  const coverThresholds = [
+    { value: 20, color: "#FF8C42" }, // Critical
+    { value: 40, color: "#FFB347" }, // Poor
+    { value: 60, color: "#E8E8E8" }, // Moderate
+    { value: 100, color: "#00A7E1" }, // Good
+  ];
+
+  // Carbon balance donut
+  const getCarbonBalance = () => {
+    if (!data) return [];
+    return [
+      { name: "Stored", value: data.carbon.stored, color: "#00A7E1" },
+      { name: "Emitted", value: data.carbon.emitted, color: "#FF8C42" },
+    ];
+  };
+
+  // Loss/Gain bars
+  const getLossGainBars = () => {
+    if (!data) return [];
+    const maxVal = Math.max(data.loss.total, data.gain.total) * 1.2;
+    return [
+      { label: "Tree Loss", value: data.loss.total, max: maxVal, color: "#FF8C42" },
+      { label: "Tree Gain", value: data.gain.total, max: maxVal, color: "#00A7E1" },
+    ];
+  };
+
   return (
-    <div className="terminal-window p-6">
+    <div className="terminal-window p-6 h-full">
       <div className="window-header mb-6">
         <span className="text-blue">[FOREST_WATCH_MODULE]</span>
         <div className="window-controls">
@@ -93,60 +121,116 @@ export default function DeforestationWidget({
 
       {data && !loading && !error && (
         <>
-          <div className="border border-white bg-code p-6 mb-6">
-            <div className="flex justify-between items-start mb-4">
+          {/* Header */}
+          <div className="border border-white bg-code p-4 mb-6">
+            <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-xl font-bold text-white uppercase tracking-wider mb-1">
+                <h3 className="text-lg font-bold text-white uppercase tracking-wider mb-1">
                   {data.location.name}
                 </h3>
                 <div className="text-xs text-white-dim uppercase">
-                  {data.location.region} • {data.location.country}
+                  {data.location.region}
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-3xl font-bold text-blue font-mono">
+                <div className="text-2xl font-bold text-blue font-mono">
                   {data.forestCover.current}%
                 </div>
-                <div className="text-xs text-white-dim">FOREST COVER</div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
-              <div className="border border-white p-3">
-                <div className="text-white-dim uppercase mb-1">BASELINE</div>
-                <div className="text-white text-lg">{data.forestCover.baseline}%</div>
-                <div className="text-white-dim text-[10px]">YEAR 2000</div>
-              </div>
-
-              <div className="border border-white p-3">
-                <div className="text-white-dim uppercase mb-1">CHANGE</div>
-                <div className={`text-lg ${data.forestCover.change < 0 ? "text-orange" : "text-blue"}`}>
-                  {data.forestCover.change > 0 ? "+" : ""}{data.forestCover.change}%
-                </div>
-                <div className="text-white-dim text-[10px]">SINCE 2000</div>
-              </div>
-
-              <div className="border border-white p-3">
-                <div className="text-white-dim uppercase mb-1">AREA</div>
-                <div className="text-white text-lg">{data.forestCover.area}</div>
-                <div className="text-white-dim text-[10px]">KM²</div>
-              </div>
-
-              <div className="border border-white p-3">
-                <div className="text-white-dim uppercase mb-1">TREND</div>
-                <div className={`text-lg text-${getTrendColor(data.loss.trend)}`}>
-                  {data.loss.trend.toUpperCase()}
-                </div>
-                <div className="text-white-dim text-[10px]">LOSS RATE</div>
+                <div className="text-[10px] text-white-dim">FOREST COVER</div>
               </div>
             </div>
           </div>
 
+          {/* Gauge + Carbon Donut */}
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            {/* Forest Cover Gauge */}
+            <div className="border border-white bg-code p-4">
+              <div className="text-white-dim uppercase text-[10px] tracking-widest mb-2 font-mono">
+                COVER_STATUS
+              </div>
+              <Gauge
+                value={data.forestCover.current}
+                min={0}
+                max={100}
+                label={getForestHealthRating(data.forestCover.current, data.loss.trend).toUpperCase()}
+                thresholds={coverThresholds}
+                size="sm"
+              />
+            </div>
+
+            {/* Carbon Balance Donut */}
+            <div className="border border-white bg-code p-4">
+              <div className="text-white-dim uppercase text-[10px] tracking-widest mb-2 font-mono">
+                CARBON_BALANCE
+              </div>
+              <DonutChart
+                data={getCarbonBalance()}
+                height={100}
+                showLegend={false}
+                centerValue={`${data.carbon.stored - data.carbon.emitted > 0 ? "+" : ""}${data.carbon.stored - data.carbon.emitted}`}
+                centerLabel="Mt NET"
+              />
+            </div>
+          </div>
+
+          {/* Key metrics */}
+          <div className="grid grid-cols-4 gap-3 text-xs font-mono mb-6">
+            <div className="border border-white p-3">
+              <div className="text-white-dim uppercase mb-1 text-[10px]">AREA</div>
+              <div className="text-white text-lg">{data.forestCover.area}</div>
+              <div className="text-[10px] text-white-dim">KM²</div>
+            </div>
+            <div className="border border-white p-3">
+              <div className="text-white-dim uppercase mb-1 text-[10px]">CHANGE</div>
+              <div className={`text-lg ${data.forestCover.change < 0 ? "text-orange" : "text-blue"}`}>
+                {data.forestCover.change > 0 ? "+" : ""}{data.forestCover.change}%
+              </div>
+              <div className="text-[10px] text-white-dim">2000→NOW</div>
+            </div>
+            <div className="border border-white p-3">
+              <div className="text-white-dim uppercase mb-1 text-[10px]">TREND</div>
+              <div className={`text-lg text-${getTrendColor(data.loss.trend)}`}>
+                {data.loss.trend.toUpperCase().slice(0, 4)}
+              </div>
+              <div className="text-[10px] text-white-dim">RATE</div>
+            </div>
+            <div className="border border-white p-3">
+              <div className="text-white-dim uppercase mb-1 text-[10px]">ALERTS</div>
+              <div className={`text-lg ${data.alerts.recent > 0 ? "text-orange" : "text-blue"}`}>
+                {data.alerts.recent}
+              </div>
+              <div className="text-[10px] text-white-dim">30 DAYS</div>
+            </div>
+          </div>
+
+          {/* Loss/Gain Bars */}
           <div className="border border-white bg-code p-4 mb-6">
-            <div className="text-white-dim uppercase text-xs tracking-widest mb-4 font-mono">
+            <div className="text-white-dim uppercase text-xs tracking-widest mb-3 font-mono">
+              <span className="text-blue">&gt;&gt;</span> LOSS_VS_GAIN (KM²)
+            </div>
+            <HorizontalBars
+              data={getLossGainBars()}
+              showValues={true}
+              unit=" km²"
+            />
+            <div className="mt-3 flex justify-between text-[10px] font-mono">
+              <span className="text-white-dim">
+                NET: <span className={data.gain.netChange >= 0 ? "text-blue" : "text-orange"}>
+                  {data.gain.netChange >= 0 ? "+" : ""}{data.gain.netChange} km²
+                </span>
+              </span>
+              <span className="text-white-dim">
+                ANNUAL: <span className="text-orange">{data.loss.annual} km²/yr</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Forest Cover History */}
+          <div className="border border-white bg-code p-4 mb-6">
+            <div className="text-white-dim uppercase text-xs tracking-widest mb-3 font-mono">
               <span className="text-blue">&gt;&gt;</span> FOREST_COVER_HISTORY (%)
             </div>
-            <ResponsiveContainer width="100%" height={150}>
+            <ResponsiveContainer width="100%" height={120}>
               <AreaChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ffffff33" />
                 <XAxis dataKey="year" stroke="#ffffff" style={{ fontSize: "10px", fontFamily: "monospace" }} />
@@ -157,78 +241,16 @@ export default function DeforestationWidget({
             </ResponsiveContainer>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-            <div className="border border-white bg-code p-4">
-              <div className="text-white-dim uppercase text-xs tracking-widest mb-4 font-mono">
-                <span className="text-blue">&gt;&gt;</span> LOSS_STATISTICS
-              </div>
-              <div className="space-y-2 font-mono text-xs">
-                <div className="flex justify-between">
-                  <span className="text-white-dim">TOTAL_LOSS</span>
-                  <span className="text-orange">{data.loss.total} km²</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-white-dim">ANNUAL_AVG</span>
-                  <span className="text-white">{data.loss.annual} km²/yr</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-white-dim">REFORESTATION</span>
-                  <span className="text-blue">{data.gain.total} km²</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-white-dim">NET_CHANGE</span>
-                  <span className={data.gain.netChange < 0 ? "text-orange" : "text-blue"}>
-                    {data.gain.netChange} km²
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="border border-white bg-code p-4">
-              <div className="text-white-dim uppercase text-xs tracking-widest mb-4 font-mono">
-                <span className="text-blue">&gt;&gt;</span> CARBON_IMPACT
-              </div>
-              <div className="space-y-2 font-mono text-xs">
-                <div className="flex justify-between">
-                  <span className="text-white-dim">STORED</span>
-                  <span className="text-blue">{data.carbon.stored} Mt CO₂</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-white-dim">EMITTED</span>
-                  <span className="text-orange">{data.carbon.emitted} Mt CO₂</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-white-dim">PROTECTED</span>
-                  <span className="text-white">{data.biodiversity.protectedArea}%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-white-dim">AT_RISK_SPECIES</span>
-                  <span className="text-white">{data.biodiversity.speciesAtRisk}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {data.alerts.recent > 0 && (
-            <div className="border border-orange bg-code p-4 mb-6">
-              <div className="text-orange uppercase text-xs tracking-widest mb-2 font-mono">
-                <span>&gt;&gt;</span> {data.alerts.recent} RECENT ALERTS (30 DAYS)
-              </div>
-              <div className="text-xs text-white-dim font-mono">
-                Primary causes: {data.loss.primaryCauses.join(" • ")}
-              </div>
-            </div>
-          )}
-
-          <div className="border border-blue bg-code p-4">
+          {/* Info panel */}
+          <div className="border border-blue bg-code p-3">
             <div className="text-xs text-white-dim font-mono space-y-1">
-              <div><span className="text-blue">&gt;</span> STATUS: {getForestHealthRating(data.forestCover.current, data.loss.trend).toUpperCase()}</div>
-              <div><span className="text-blue">&gt;</span> INTACT_FOREST: {data.biodiversity.intactForest}% of total</div>
-              <div><span className="text-blue">&gt;</span> ESTIMATED_TREES: {(data.forestCover.treeCount || 0).toLocaleString()}</div>
+              <div><span className="text-blue">&gt;</span> PROTECTED: {data.biodiversity.protectedArea}% • INTACT: {data.biodiversity.intactForest}%</div>
+              <div><span className="text-blue">&gt;</span> AT_RISK_SPECIES: {data.biodiversity.speciesAtRisk} • TREES: {(data.forestCover.treeCount || 0).toLocaleString()}</div>
+              <div><span className="text-blue">&gt;</span> CAUSES: {data.loss.primaryCauses.slice(0, 3).join(" • ")}</div>
             </div>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-white flex justify-between text-[10px] text-white-dim uppercase tracking-widest">
+          <div className="mt-4 pt-3 border-t border-white flex justify-between text-[10px] text-white-dim uppercase tracking-widest">
             <div>SOURCE: <span className="text-blue">GLOBAL_FOREST_WATCH</span></div>
             <div>UPDATED: <span className="text-blue">{new Date(data.lastUpdated).toLocaleDateString()}</span></div>
           </div>

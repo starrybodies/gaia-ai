@@ -1,3 +1,6 @@
+"use client";
+
+import dynamic from "next/dynamic";
 import WeatherWidget from "@/components/WeatherWidget";
 import AirQualityWidget from "@/components/AirQualityWidget";
 import ClimateWidget from "@/components/ClimateWidget";
@@ -8,12 +11,35 @@ import CarbonWidget from "@/components/CarbonWidget";
 import SoilWidget from "@/components/SoilWidget";
 import DeforestationWidget from "@/components/DeforestationWidget";
 
+// Dynamically import DashboardLayout to avoid SSR issues with react-grid-layout
+const DashboardLayout = dynamic(() => import("@/components/DashboardLayout"), {
+  ssr: false,
+  loading: () => (
+    <div className="text-white-dim font-mono text-sm">
+      <span className="text-blue">&gt;</span> LOADING_DASHBOARD_LAYOUT
+      <span className="cursor"></span>
+    </div>
+  ),
+});
+
 // Salt Spring Island, BC - default demo location
 const DEFAULT_LOCATION = {
   name: "Salt Spring Island, BC",
   lat: 48.8167,
   lon: -123.5,
 };
+
+const WIDGET_IDS = [
+  "weather",
+  "airquality",
+  "climate",
+  "satellite",
+  "carbon",
+  "soil",
+  "deforestation",
+  "biodiversity",
+  "ocean",
+];
 
 export default function DemoPage() {
   return (
@@ -31,16 +57,20 @@ export default function DemoPage() {
             &gt; ENVIRONMENTAL_INTELLIGENCE_PLATFORM
           </h1>
           <p className="text-sm text-white-dim font-mono">
-            LOCATION: {DEFAULT_LOCATION.name.toUpperCase()} • 9 ACTIVE DATA MODULES
+            LOCATION: {DEFAULT_LOCATION.name.toUpperCase()} • 9 ACTIVE DATA MODULES • DRAG TO REARRANGE
           </p>
         </div>
 
-        {/* System status */}
-        <div className="terminal-window p-6 mb-8">
-          <div className="window-header mb-4">
-            <span className="text-white">[SYSTEM_LOG]</span>
-          </div>
-          <div className="font-mono text-xs space-y-1 text-white-dim">
+        {/* System status - collapsed */}
+        <details className="terminal-window p-6 mb-8 group">
+          <summary className="cursor-pointer list-none">
+            <div className="window-header">
+              <span className="text-white">[SYSTEM_LOG]</span>
+              <span className="text-blue text-xs ml-2 group-open:hidden">CLICK_TO_EXPAND</span>
+              <span className="text-blue text-xs ml-2 hidden group-open:inline">CLICK_TO_COLLAPSE</span>
+            </div>
+          </summary>
+          <div className="font-mono text-xs space-y-1 text-white-dim mt-4">
             <div>
               <span className="text-blue">&gt;</span> INITIALIZING GAIA_AI... <span className="text-white">[OK]</span>
             </div>
@@ -78,21 +108,13 @@ export default function DemoPage() {
               <span className="text-blue">&gt;&gt;</span> ALL_SYSTEMS: OPERATIONAL • 9 MODULES ACTIVE
             </div>
           </div>
-        </div>
+        </details>
 
-        {/* Weather + Air Quality grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {/* Dashboard with draggable widgets */}
+        <DashboardLayout widgetIds={WIDGET_IDS}>
           <WeatherWidget />
           <AirQualityWidget />
-        </div>
-
-        {/* Climate widget */}
-        <div className="mb-8">
           <ClimateWidget />
-        </div>
-
-        {/* Satellite + Carbon grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           <SatelliteWidget
             defaultLocation={DEFAULT_LOCATION.name}
             defaultLat={DEFAULT_LOCATION.lat}
@@ -103,10 +125,6 @@ export default function DemoPage() {
             defaultLat={DEFAULT_LOCATION.lat}
             defaultLon={DEFAULT_LOCATION.lon}
           />
-        </div>
-
-        {/* Soil + Deforestation grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           <SoilWidget
             defaultLocation={DEFAULT_LOCATION.name}
             defaultLat={DEFAULT_LOCATION.lat}
@@ -117,20 +135,12 @@ export default function DemoPage() {
             defaultLat={DEFAULT_LOCATION.lat}
             defaultLon={DEFAULT_LOCATION.lon}
           />
-        </div>
-
-        {/* Biodiversity widget - full width with map */}
-        <div className="mb-8">
           <BiodiversityWidget />
-        </div>
-
-        {/* Ocean widget */}
-        <div className="mb-8">
           <OceanWidget />
-        </div>
+        </DashboardLayout>
 
         {/* Module info */}
-        <div className="border border-white bg-terminal p-6">
+        <div className="border border-white bg-terminal p-6 mt-8">
           <div className="text-xs text-white-dim font-mono space-y-2">
             <div>
               <span className="text-blue">&gt;&gt;</span> ACTIVE_MODULES: 9/9 [ALL OPERATIONAL]
