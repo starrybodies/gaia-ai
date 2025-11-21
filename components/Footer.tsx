@@ -1,63 +1,74 @@
 export default function Footer() {
   return (
-    <footer className="border-t-2 border-matrix mt-20 bg-black">
+    <footer className="border-t border-border mt-20 bg-card">
       {/* Main footer content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 font-mono">
-          {/* Brand - ASCII style */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Brand */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-matrix-green text-2xl">█</span>
-              <h3 className="text-base font-bold tracking-wider glow-green">
-                GAIA.AI
+              <div className="w-8 h-8 rounded-lg bg-gradient-earth flex items-center justify-center">
+                <span className="text-white text-lg font-bold">G</span>
+              </div>
+              <h3 className="text-lg font-bold text-charcoal">
+                GAIA AI
               </h3>
             </div>
-            <p className="text-xs text-terminal-gray leading-relaxed max-w-md mb-4 font-mono">
-              &gt; OPEN-SOURCE ENVIRONMENTAL INTELLIGENCE PLATFORM
-              <br />
-              &gt; UNIVERSAL ACCESS TO EARTH DATA
-              <br />
-              &gt; AI-POWERED VISUALIZATION
+            <p className="text-sm text-stone leading-relaxed max-w-md mb-4">
+              Open-source environmental intelligence platform providing universal access to Earth's vital data through AI-powered visualization and analysis.
             </p>
-            <div className="text-[10px] text-matrix-green uppercase tracking-widest">
-              [ CYPHERPUNK • DECENTRALIZED • TRANSPARENT ]
+            <div className="flex gap-2">
+              <span className="badge badge-success text-[10px]">Open Source</span>
+              <span className="badge badge-primary text-[10px]">MIT License</span>
             </div>
           </div>
 
-          {/* Links - Terminal menu style */}
+          {/* Platform Links */}
           <div>
-            <div className="text-xs font-bold mb-3 text-matrix-green uppercase tracking-wider border-b border-matrix-green/30 pb-1">
-              [PLATFORM]
+            <div className="text-sm font-semibold mb-3 text-charcoal">
+              Platform
             </div>
-            <ul className="space-y-2 text-xs text-terminal-gray">
-              {["DASHBOARD", "DATA_SOURCES", "AI_QUERY", "API_DOCS"].map(
-                (item, i) => (
-                  <li key={i}>
-                    <a
-                      href="#"
-                      className="hover:text-matrix-green transition-colors cmd-prompt"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                )
-              )}
+            <ul className="space-y-2 text-sm text-stone">
+              {[
+                { label: "Dashboard", href: "/demo" },
+                { label: "Data Sources", href: "/about#data" },
+                { label: "About", href: "/about" },
+                { label: "API Docs", href: "#" }
+              ].map((item, i) => (
+                <li key={i}>
+                  <a
+                    href={item.href}
+                    className="hover:text-rust-orange transition-colors inline-flex items-center gap-1"
+                  >
+                    <span className="text-rust-orange">→</span>
+                    {item.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Community */}
           <div>
-            <div className="text-xs font-bold mb-3 text-neon-cyan uppercase tracking-wider border-b border-neon-cyan/30 pb-1">
-              [NETWORK]
+            <div className="text-sm font-semibold mb-3 text-charcoal">
+              Community
             </div>
-            <ul className="space-y-2 text-xs text-terminal-gray">
-              {["GITHUB", "DISCORD", "CONTRIBUTE", "ROADMAP"].map((item, i) => (
+            <ul className="space-y-2 text-sm text-stone">
+              {[
+                { label: "GitHub", href: "https://github.com" },
+                { label: "Documentation", href: "#" },
+                { label: "Contribute", href: "#" },
+                { label: "Roadmap", href: "/about#roadmap" }
+              ].map((item, i) => (
                 <li key={i}>
                   <a
-                    href="#"
-                    className="hover:text-neon-cyan transition-colors cmd-prompt"
+                    href={item.href}
+                    target={item.href.startsWith("http") ? "_blank" : undefined}
+                    rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                    className="hover:text-sky-blue transition-colors inline-flex items-center gap-1"
                   >
-                    {item}
+                    <span className="text-sky-blue">→</span>
+                    {item.label}
                   </a>
                 </li>
               ))}
@@ -65,27 +76,27 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Data sources ticker */}
-        <div className="mt-8 pt-6 border-t border-matrix-green/20">
-          <div className="text-[9px] text-terminal-gray uppercase tracking-widest mb-2">
-            INTEGRATED DATA SOURCES:
+        {/* Data sources */}
+        <div className="mt-8 pt-6 border-t border-border">
+          <div className="text-xs font-semibold text-stone mb-3">
+            Integrated Data Sources
           </div>
           <div className="flex flex-wrap gap-2">
             {[
-              "NASA_EOSDIS",
+              "NASA EOSDIS",
               "NOAA",
-              "OPENAQ",
-              "GFW",
-              "COPERNICUS",
-              "PLANET_LABS",
-              "GEE",
-              "MSFT_PC",
-              "CLIMATE_TRACE",
-              "OWM",
+              "OpenAQ",
+              "Global Forest Watch",
+              "Copernicus",
+              "Planet Labs",
+              "Google Earth Engine",
+              "Microsoft Planetary Computer",
+              "Climate TRACE",
+              "OpenWeatherMap"
             ].map((source, i) => (
               <span
                 key={i}
-                className="text-[8px] px-2 py-1 border border-matrix-green/40 text-terminal-gray hover:text-matrix-green hover:border-matrix-green transition-all"
+                className="text-xs px-3 py-1 bg-cream text-stone rounded-md hover:bg-earth-beige-light transition-all border border-transparent hover:border-border-strong"
               >
                 {source}
               </span>
@@ -93,44 +104,45 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom bar - Terminal style */}
-        <div className="mt-8 pt-6 border-t border-matrix-green/20 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-[10px] text-terminal-gray font-mono">
-            <span className="text-matrix-green">&gt;</span> © 2025 GAIA.AI •
-            OPEN SOURCE [MIT] • DATA LIBERATION
+        {/* Bottom bar */}
+        <div className="mt-8 pt-6 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="text-xs text-stone">
+            © 2025 GAIA AI • Open Source • Environmental Data for All
           </div>
-          <div className="flex items-center gap-4 text-[10px] text-terminal-gray uppercase tracking-wider">
+          <div className="flex items-center gap-4 text-xs text-stone">
             <a
               href="#"
-              className="hover:text-matrix-green transition-colors border border-transparent hover:border-matrix-green px-2 py-1"
+              className="hover:text-rust-orange transition-colors"
             >
-              [PRIVACY]
+              Privacy Policy
             </a>
             <a
               href="#"
-              className="hover:text-matrix-green transition-colors border border-transparent hover:border-matrix-green px-2 py-1"
+              className="hover:text-rust-orange transition-colors"
             >
-              [TERMS]
+              Terms of Use
             </a>
             <a
               href="#"
-              className="hover:text-matrix-green transition-colors border border-transparent hover:border-matrix-green px-2 py-1"
+              className="hover:text-rust-orange transition-colors"
             >
-              [DATA_POLICY]
+              Data Policy
             </a>
           </div>
         </div>
       </div>
 
       {/* Status bar */}
-      <div className="status-bar">
-        <div className="status-bar-item">
-          <span>SYSTEM_STATUS:</span>
-          <span className="text-matrix-green flicker">ONLINE</span>
-        </div>
-        <div className="status-bar-item">
-          <span>BUILD: v0.1.0-alpha</span>
-          <span>UPTIME: CONTINUOUS</span>
+      <div className="border-t border-border bg-cream/50 py-2">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center text-xs">
+          <div className="flex items-center gap-2">
+            <span className="status-indicator status-active"></span>
+            <span className="text-stone font-mono">System Online</span>
+          </div>
+          <div className="flex items-center gap-4 text-stone font-mono">
+            <span>v0.1.0-alpha</span>
+            <span className="text-success">Operational</span>
+          </div>
         </div>
       </div>
     </footer>

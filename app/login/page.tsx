@@ -9,7 +9,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [bootSequence, setBootSequence] = useState(true);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,174 +24,144 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        setError("ACCESS_DENIED: Invalid credentials");
+        setError("Invalid credentials. Please try again.");
         setLoading(false);
       } else {
         // Success!
         router.push("/demo");
       }
     } catch (err) {
-      setError("SYSTEM_ERROR: Authentication failed");
+      setError("Authentication failed. Please try again.");
       setLoading(false);
     }
   };
 
-  // Hide boot sequence after 2 seconds
-  setTimeout(() => setBootSequence(false), 2000);
-
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center px-4">
-      <div className="max-w-2xl w-full">
-        {bootSequence ? (
-          // Boot Sequence
-          <div className="terminal-window p-8">
-            <div className="window-header mb-6">
-              <span className="text-matrix-green">[SYSTEM_BOOT]</span>
+    <div className="min-h-screen bg-gradient-cool flex items-center justify-center px-4 py-12">
+      <div className="max-w-md w-full">
+        <div className="data-card p-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 rounded-xl bg-gradient-earth flex items-center justify-center mx-auto mb-4">
+              <span className="text-white text-2xl font-bold">G</span>
             </div>
-            <div className="font-mono text-sm space-y-2 text-terminal-gray">
-              <div>
-                <span className="text-matrix-green">&gt;</span> INITIALIZING
-                AUTHENTICATION MODULE...
-              </div>
-              <div>
-                <span className="text-matrix-green">&gt;</span> LOADING
-                SECURITY PROTOCOLS...
-              </div>
-              <div>
-                <span className="text-matrix-green">&gt;</span> ESTABLISHING
-                SECURE CONNECTION...
-              </div>
-              <div className="text-neon-cyan">
-                <span className="text-matrix-green">&gt;&gt;</span> READY FOR
-                INPUT<span className="cursor"></span>
-              </div>
-            </div>
+            <h1 className="heading-secondary mb-2">
+              Sign In to GAIA AI
+            </h1>
+            <p className="text-sm text-stone">
+              Access environmental intelligence dashboard
+            </p>
           </div>
-        ) : (
-          // Login Form
-          <div className="terminal-window p-8">
-            <div className="window-header mb-6">
-              <span className="text-matrix-green">[ACCESS_CONTROL]</span>
-              <div className="window-controls">
-                <div className="window-control"></div>
-                <div className="window-control"></div>
-                <div className="window-control"></div>
-              </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Username */}
+            <div>
+              <label className="block text-sm font-semibold text-charcoal mb-2">
+                Username
+              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-4 py-3 bg-cream border border-border-strong rounded-lg outline-none text-charcoal placeholder:text-stone focus:border-sky-blue transition-all"
+                placeholder="Enter your username"
+                required
+                autoFocus
+              />
             </div>
 
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-matrix-green font-mono mb-2 glow-green">
-                GAIA.AI_AUTH
-              </h1>
-              <p className="text-sm text-terminal-gray font-mono">
-                <span className="text-matrix-green">&gt;</span> RESTRICTED
-                AREA • AUTHORIZED PERSONNEL ONLY
-              </p>
+            {/* Password */}
+            <div>
+              <label className="block text-sm font-semibold text-charcoal mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 bg-cream border border-border-strong rounded-lg outline-none text-charcoal placeholder:text-stone focus:border-sky-blue transition-all"
+                placeholder="Enter your password"
+                required
+              />
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Username */}
-              <div>
-                <label className="block text-xs text-neon-cyan uppercase tracking-wider mb-2 font-mono">
-                  [USERNAME]
-                </label>
-                <div className="border border-matrix-green/40 bg-terminal-dark p-3 flex items-center hover:border-matrix-green transition-all">
-                  <span className="text-matrix-green mr-2">&gt;</span>
-                  <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="flex-1 bg-transparent border-none outline-none text-matrix-green font-mono uppercase tracking-wider"
-                    placeholder="ENTER_USERNAME"
-                    required
-                    autoFocus
-                  />
-                </div>
+            {/* Error Message */}
+            {error && (
+              <div className="bg-error/10 border border-error rounded-lg p-4">
+                <p className="text-error text-sm font-medium">{error}</p>
               </div>
+            )}
 
-              {/* Password */}
-              <div>
-                <label className="block text-xs text-neon-cyan uppercase tracking-wider mb-2 font-mono">
-                  [PASSWORD]
-                </label>
-                <div className="border border-matrix-green/40 bg-terminal-dark p-3 flex items-center hover:border-matrix-green transition-all">
-                  <span className="text-matrix-green mr-2">&gt;</span>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="flex-1 bg-transparent border-none outline-none text-matrix-green font-mono"
-                    placeholder="********"
-                    required
-                  />
-                </div>
-              </div>
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full btn btn-primary py-3 ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              {loading ? "Signing in..." : "Sign In"}
+            </button>
+          </form>
 
-              {/* Error Message */}
-              {error && (
-                <div className="border border-neon-red bg-terminal-dark p-4">
-                  <div className="text-neon-red font-mono text-sm">
-                    <span className="animate-pulse">⚠</span> {error}
+          {/* Demo Credentials */}
+          <div className="mt-8 pt-6 border-t border-border">
+            <div className="text-xs font-semibold text-stone uppercase tracking-wide mb-3">
+              Demo Credentials
+            </div>
+            <div className="space-y-2 text-sm">
+              {[
+                { username: "admin", password: "gaia2025", name: "Admin Account" },
+                { username: "demo", password: "demo", name: "Demo User" },
+                { username: "hacker", password: "c4pher", name: "Cypherpunk" },
+              ].map((cred, i) => (
+                <div
+                  key={i}
+                  className="bg-cream rounded-lg p-3 flex items-center justify-between"
+                >
+                  <div>
+                    <div className="text-xs text-stone">{cred.name}</div>
+                    <div className="font-mono text-xs text-charcoal">
+                      <span className="text-rust-orange">user:</span> {cred.username} •{" "}
+                      <span className="text-sky-blue">pass:</span> {cred.password}
+                    </div>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUsername(cred.username);
+                      setPassword(cred.password);
+                    }}
+                    className="text-xs text-sky-blue hover:text-sky-blue-dark font-semibold"
+                  >
+                    Use →
+                  </button>
                 </div>
-              )}
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={loading}
-                className={`w-full px-6 py-4 border-2 border-matrix-green text-matrix-green hover:bg-matrix-green hover:text-black transition-all font-mono text-sm uppercase tracking-wider relative group ${
-                  loading ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-              >
-                {loading ? (
-                  <span>
-                    &gt; AUTHENTICATING<span className="cursor"></span>
-                  </span>
-                ) : (
-                  <span className="relative z-10">&gt; GRANT_ACCESS</span>
-                )}
-                {!loading && (
-                  <div className="absolute inset-0 box-glow-green opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                )}
-              </button>
-            </form>
-
-            {/* Demo Credentials */}
-            <div className="mt-8 border-t border-matrix-green/30 pt-6">
-              <div className="text-xs text-terminal-gray font-mono space-y-2">
-                <div className="text-neon-cyan uppercase mb-3">
-                  [DEMO_CREDENTIALS]
-                </div>
-                <div>
-                  <span className="text-matrix-green">&gt;</span> USERNAME:{" "}
-                  <span className="text-neon-cyan">admin</span> • PASSWORD:{" "}
-                  <span className="text-neon-cyan">gaia2025</span>
-                </div>
-                <div>
-                  <span className="text-matrix-green">&gt;</span> USERNAME:{" "}
-                  <span className="text-neon-cyan">demo</span> • PASSWORD:{" "}
-                  <span className="text-neon-cyan">demo</span>
-                </div>
-                <div>
-                  <span className="text-matrix-green">&gt;</span> USERNAME:{" "}
-                  <span className="text-neon-cyan">hacker</span> • PASSWORD:{" "}
-                  <span className="text-neon-cyan">c4pher</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Back to Home */}
-            <div className="mt-6 text-center">
-              <a
-                href="/"
-                className="text-xs text-terminal-gray hover:text-matrix-green transition-colors font-mono uppercase tracking-wider"
-              >
-                &lt; BACK_TO_HOME
-              </a>
+              ))}
             </div>
           </div>
-        )}
+
+          {/* Back to Home */}
+          <div className="mt-6 text-center">
+            <a
+              href="/"
+              className="text-sm text-stone hover:text-rust-orange transition-colors font-medium"
+            >
+              ← Back to Home
+            </a>
+          </div>
+        </div>
+
+        {/* Additional info */}
+        <div className="mt-6 text-center text-xs text-stone">
+          <p>
+            This is an alpha release. By signing in, you agree to our{" "}
+            <a href="#" className="text-rust-orange hover:underline">
+              Terms of Service
+            </a>
+            .
+          </p>
+        </div>
       </div>
     </div>
   );

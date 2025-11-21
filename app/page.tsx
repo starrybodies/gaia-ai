@@ -1,246 +1,149 @@
-import InteractiveConsole from "@/components/InteractiveConsole";
-
 export default function Home() {
   return (
-    <div className="bg-black min-h-screen">
-      {/* Hero Section - Terminal Boot Sequence */}
-      <section className="relative overflow-hidden py-20 sm:py-32">
+    <div className="bg-background min-h-screen">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Main terminal window */}
-          <div className="terminal-window p-8 mb-8">
-            <div className="window-header mb-6">
-              <span className="text-matrix-green">[SYSTEM_INIT]</span>
-              <div className="window-controls">
-                <div className="window-control"></div>
-                <div className="window-control"></div>
-                <div className="window-control"></div>
-              </div>
+          <div className="text-center max-w-4xl mx-auto mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-cream rounded-full border border-border mb-6">
+              <span className="status-indicator status-active"></span>
+              <span className="text-xs font-semibold text-stone">
+                Real-time Environmental Intelligence
+              </span>
             </div>
 
-            {/* Boot sequence */}
-            <div className="font-mono text-xs sm:text-sm space-y-2 mb-8 text-terminal-gray">
-              <div>
-                <span className="text-matrix-green">&gt;</span> INITIALIZING
-                GAIA.AI ENVIRONMENTAL INTELLIGENCE SYSTEM...
-              </div>
-              <div>
-                <span className="text-matrix-green">&gt;</span> LOADING DATA
-                SOURCES... <span className="text-neon-cyan">[OK]</span>
-              </div>
-              <div>
-                <span className="text-matrix-green">&gt;</span> CONNECTING TO
-                EARTH OBSERVATION NETWORKS...{" "}
-                <span className="text-neon-cyan">[OK]</span>
-              </div>
-              <div>
-                <span className="text-matrix-green">&gt;</span> AI SYSTEMS
-                ONLINE... <span className="text-neon-cyan">[OK]</span>
-              </div>
-            </div>
-
-            {/* Main heading */}
-            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6 font-mono">
-              <span className="text-matrix-green glow-green">
-                EARTH_INTELLIGENCE
-              </span>
-              <br />
-              <span className="text-neon-cyan glow-cyan">
-                UNIVERSALLY_ACCESSIBLE
-              </span>
-              <span className="cursor"></span>
+            <h1 className="heading-primary mb-6">
+              Earth's Vital Data,{" "}
+              <span className="text-rust-orange">Universally Accessible</span>
             </h1>
 
-            {/* Description */}
-            <div className="text-sm sm:text-base text-terminal-gray max-w-3xl mb-8 font-mono leading-relaxed">
-              <span className="text-matrix-green">&gt;</span> COMPREHENSIVE
-              ENVIRONMENTAL DATA PLATFORM
-              <br />
-              <span className="text-matrix-green">&gt;</span> AI-POWERED QUERY
-              INTERFACE + MODULAR DASHBOARDS
-              <br />
-              <span className="text-matrix-green">&gt;</span> REAL-TIME
-              MONITORING: CLIMATE | WEATHER | AIR_QUALITY | BIODIVERSITY
-            </div>
+            <p className="text-lg text-stone leading-relaxed mb-8 max-w-3xl mx-auto">
+              Comprehensive environmental intelligence platform providing real-time access to climate, weather, air quality, and biodiversity data from the world's leading sources—powered by AI.
+            </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-8">
-              <a
-                href="/demo"
-                className="px-6 py-3 bg-black border-2 border-matrix-green text-matrix-green hover:bg-matrix-green hover:text-black transition-all font-mono text-sm uppercase tracking-wider relative group text-center"
-              >
-                <span className="relative z-10">
-                  &gt; LAUNCH_DASHBOARD.EXE
-                </span>
-                <div className="absolute inset-0 box-glow-green opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+              <a href="/demo" className="btn btn-primary">
+                Explore Dashboard
               </a>
               <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-6 py-3 bg-black border-2 border-neon-cyan text-neon-cyan hover:bg-neon-cyan hover:text-black transition-all font-mono text-sm uppercase tracking-wider text-center"
+                href="/about"
+                className="btn btn-outline"
               >
-                &gt; VIEW_SOURCE.GIT
+                Learn More
               </a>
             </div>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {/* Quick stats */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto">
               {[
-                {
-                  label: "DATA_SOURCES",
-                  value: "05+",
-                  color: "matrix-green",
-                },
-                {
-                  label: "METRICS",
-                  value: "100+",
-                  color: "neon-cyan",
-                },
-                {
-                  label: "UPTIME",
-                  value: "24/7",
-                  color: "neon-blue",
-                },
-                {
-                  label: "LICENSE",
-                  value: "MIT",
-                  color: "neon-magenta",
-                },
+                { label: "Data Sources", value: "10+", color: "sky-blue" },
+                { label: "Metrics", value: "100+", color: "rust-orange" },
+                { label: "Coverage", value: "Global", color: "success" },
+                { label: "License", value: "MIT", color: "warning" },
               ].map((stat, i) => (
-                <div
-                  key={i}
-                  className="border border-matrix-green/40 bg-terminal-dark p-3 hover:border-matrix-green hover:box-glow-green transition-all"
-                >
+                <div key={i} className="data-card p-4 text-center">
                   <div
-                    className={`text-2xl sm:text-3xl font-bold mb-1 text-${stat.color} font-mono`}
+                    className={`metric-value text-3xl mb-1 text-${stat.color}`}
                   >
                     {stat.value}
                   </div>
-                  <div className="text-[10px] text-terminal-gray uppercase tracking-wider">
-                    {stat.label}
-                  </div>
+                  <div className="metric-label text-xs">{stat.label}</div>
                 </div>
               ))}
             </div>
           </div>
-
-          {/* Status indicator */}
-          <div className="flex items-center justify-center gap-2 text-xs text-terminal-gray uppercase tracking-widest">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-matrix-green opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-matrix-green"></span>
-            </span>
-            <span>ALPHA_v0.1.0 • OPEN_SOURCE • DECENTRALIZED</span>
-          </div>
-
-          {/* Interactive Console */}
-          <div className="mt-8">
-            <InteractiveConsole />
-          </div>
-
-          {/* Try commands hint */}
-          <div className="mt-4 text-center text-xs text-terminal-gray font-mono">
-            <span className="text-neon-cyan">TIP:</span> Try commands like{" "}
-            <span className="text-matrix-green">status</span>,{" "}
-            <span className="text-matrix-green">data</span>,{" "}
-            <span className="text-matrix-green">modules</span>, or{" "}
-            <span className="text-matrix-green">demo</span>
-          </div>
         </div>
       </section>
 
-      {/* System Modules Section */}
-      <section id="features" className="py-20 bg-black">
+      {/* Data Categories */}
+      <section className="py-16 bg-cream/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Section header */}
-          <div className="terminal-window p-6 mb-8">
-            <div className="window-header mb-4">
-              <span className="text-neon-cyan">[SYSTEM_MODULES]</span>
-            </div>
-            <h2 className="text-3xl font-bold font-mono text-matrix-green">
-              &gt; CORE_CAPABILITIES
+          <div className="text-center mb-12">
+            <h2 className="heading-secondary mb-4">
+              Comprehensive Environmental Data
             </h2>
-            <p className="text-sm text-terminal-gray mt-2 font-mono">
-              MODULAR ARCHITECTURE FOR COMPREHENSIVE EARTH MONITORING
+            <p className="text-stone max-w-2xl mx-auto">
+              Access real-time, historical, and projected data across multiple environmental domains
             </p>
           </div>
 
-          {/* Modules grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
-                id: "MODULE_01",
-                title: "AI_QUERY_ENGINE",
-                desc: "Natural language processing for environmental data queries. AI interprets intent and generates contextual visualizations.",
-                color: "matrix-green",
-                icon: "▲",
+                title: "Climate & Weather",
+                description:
+                  "Real-time weather conditions, forecasts, temperature trends, precipitation patterns, and climate change indicators",
+                icon: "🌡️",
+                metrics: ["Temperature", "Precipitation", "Wind Patterns"],
+                color: "sky-blue",
               },
               {
-                id: "MODULE_02",
-                title: "DASHBOARD_BUILDER",
-                desc: "Modular widget system with drag-and-drop. Build custom interfaces, save configurations, share with network.",
-                color: "neon-cyan",
-                icon: "◆",
+                title: "Air Quality",
+                description:
+                  "PM2.5, PM10, CO2, NO2, ozone levels, and air quality indices from thousands of monitoring stations worldwide",
+                icon: "💨",
+                metrics: ["PM2.5", "AQI", "Pollutants"],
+                color: "rust-orange",
               },
               {
-                id: "MODULE_03",
-                title: "EARTH_VITALS",
-                desc: "Mission control view of global environmental metrics. Real-time data with historical context and trend analysis.",
-                color: "neon-blue",
-                icon: "●",
+                title: "Ocean & Water",
+                description:
+                  "Sea surface temperature, ocean currents, salinity, acidification, and freshwater quality metrics",
+                icon: "🌊",
+                metrics: ["Temperature", "pH Levels", "Salinity"],
+                color: "data-primary",
               },
               {
-                id: "MODULE_04",
-                title: "VIZ_ENGINE",
-                desc: "Interactive charts, 3D globes, heatmaps, geospatial overlays. Export visualizations for analysis and reporting.",
-                color: "neon-magenta",
-                icon: "■",
+                title: "Biodiversity",
+                description:
+                  "Species observations, habitat monitoring, ecosystem health, and conservation status data",
+                icon: "🌿",
+                metrics: ["Species Count", "Habitat Loss", "Conservation"],
+                color: "data-tertiary",
               },
               {
-                id: "MODULE_05",
-                title: "DATA_INTEGRATION",
-                desc: "Unified API layer for NASA, NOAA, ESA, OpenAQ, GFW and more. All data properly attributed and transparent.",
-                color: "neon-yellow",
-                icon: "◗",
+                title: "Land & Forests",
+                description:
+                  "Deforestation rates, land cover changes, agricultural data, and vegetation health indices",
+                icon: "🌲",
+                metrics: ["Forest Cover", "Land Use", "Vegetation"],
+                color: "success",
               },
               {
-                id: "MODULE_06",
-                title: "KNOWLEDGE_BASE",
-                desc: "Educational overlays and AI explanations. Every metric includes context, methodology, and citation generator.",
-                color: "matrix-green",
-                icon: "◉",
+                title: "Energy & Emissions",
+                description:
+                  "Carbon emissions, renewable energy production, fossil fuel consumption, and emission tracking",
+                icon: "⚡",
+                metrics: ["CO2 Emissions", "Renewables", "Energy Mix"],
+                color: "warning",
               },
-            ].map((module, i) => (
+            ].map((category, i) => (
               <div
                 key={i}
-                className="terminal-window p-6 hover:box-glow-green transition-all group"
+                className="data-module hover:shadow-lg transition-all group"
               >
-                <div className="window-header mb-4">
-                  <span className={`text-${module.color}`}>[{module.id}]</span>
-                  <div className="window-controls">
-                    <div className="window-control"></div>
+                <div className="flex items-start gap-3 mb-4">
+                  <span className="text-4xl">{category.icon}</span>
+                  <div className="flex-1">
+                    <h3 className="heading-tertiary text-lg mb-2">
+                      {category.title}
+                    </h3>
                   </div>
                 </div>
 
-                <div
-                  className={`text-4xl mb-4 text-${module.color} font-mono`}
-                >
-                  {module.icon}
-                </div>
-
-                <h3
-                  className={`text-base font-bold mb-3 text-${module.color} uppercase tracking-wider font-mono`}
-                >
-                  {module.title}
-                </h3>
-
-                <p className="text-xs text-terminal-gray leading-relaxed font-mono">
-                  {module.desc}
+                <p className="text-sm text-stone leading-relaxed mb-4">
+                  {category.description}
                 </p>
 
-                <div className="mt-4 text-[10px] text-terminal-gray">
-                  STATUS:{" "}
-                  <span className={`text-${module.color}`}>OPERATIONAL</span>
+                <div className="flex flex-wrap gap-2">
+                  {category.metrics.map((metric, j) => (
+                    <span
+                      key={j}
+                      className="badge badge-primary text-[10px]"
+                    >
+                      {metric}
+                    </span>
+                  ))}
                 </div>
               </div>
             ))}
@@ -248,152 +151,148 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Data Sources Terminal */}
-      <section id="data" className="py-20">
+      {/* Live Data Preview */}
+      <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="terminal-window p-8">
-            <div className="window-header mb-6">
-              <span className="text-neon-cyan">[DATA_SOURCES]</span>
-              <div className="window-controls">
-                <div className="window-control"></div>
-                <div className="window-control"></div>
-                <div className="window-control"></div>
+          <div className="data-card p-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="heading-secondary mb-2">
+                  Real-Time Data Access
+                </h2>
+                <p className="text-stone">
+                  Live environmental metrics updated continuously
+                </p>
               </div>
+              <a href="/demo" className="btn btn-primary">
+                View Dashboard
+              </a>
             </div>
 
-            <h2 className="text-3xl font-bold mb-4 text-matrix-green font-mono">
-              &gt; INTEGRATED_NETWORKS
-            </h2>
-            <p className="text-sm text-terminal-gray mb-8 font-mono">
-              DIRECT CONNECTION TO WORLD&apos;S LEADING ENVIRONMENTAL DATA
-              PROVIDERS
-            </p>
-
-            {/* Data source list */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
-                { name: "NASA_EOSDIS", status: "CONNECTED" },
-                { name: "NOAA_CDO", status: "CONNECTED" },
-                { name: "OPENAQ", status: "CONNECTED" },
-                { name: "GFW_API", status: "CONNECTED" },
-                { name: "COPERNICUS", status: "READY" },
-                { name: "PLANET_LABS", status: "READY" },
-                { name: "GOOGLE_EE", status: "READY" },
-                { name: "MSFT_PLANETARY", status: "READY" },
-                { name: "CLIMATE_TRACE", status: "READY" },
-                { name: "OPENWEATHER", status: "CONNECTED" },
-                { name: "SENTINEL_HUB", status: "READY" },
-                { name: "GBIF", status: "READY" },
-              ].map((source, i) => (
-                <div
-                  key={i}
-                  className="border border-matrix-green/40 bg-terminal-dark p-3 hover:border-matrix-green transition-all font-mono group"
-                >
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-terminal-gray group-hover:text-matrix-green transition-colors">
-                      {source.name}
-                    </span>
+                {
+                  metric: "Global Temp",
+                  value: "+1.1°C",
+                  trend: "↑",
+                  status: "warning",
+                },
+                {
+                  metric: "CO2 Level",
+                  value: "419 ppm",
+                  trend: "↑",
+                  status: "error",
+                },
+                {
+                  metric: "Forest Cover",
+                  value: "31.2%",
+                  trend: "↓",
+                  status: "warning",
+                },
+                {
+                  metric: "Renewables",
+                  value: "29.5%",
+                  trend: "↑",
+                  status: "success",
+                },
+              ].map((item, i) => (
+                <div key={i} className="text-center p-4 bg-cream rounded-lg">
+                  <div className="metric-label mb-2">{item.metric}</div>
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="metric-value text-3xl">{item.value}</span>
                     <span
-                      className={`text-[10px] ${
-                        source.status === "CONNECTED"
-                          ? "text-matrix-green"
-                          : "text-neon-cyan"
+                      className={`text-2xl ${
+                        item.status === "success"
+                          ? "text-success"
+                          : item.status === "warning"
+                          ? "text-warning"
+                          : "text-error"
                       }`}
                     >
-                      [{source.status}]
+                      {item.trend}
                     </span>
                   </div>
                 </div>
               ))}
             </div>
-
-            {/* Additional info */}
-            <div className="border-t border-matrix-green/30 pt-6">
-              <div className="text-xs text-terminal-gray font-mono">
-                <span className="text-matrix-green">&gt;</span> EXPANDING
-                NETWORK: +20 GOVERNMENTAL AND NGO DATABASES
-                <br />
-                <span className="text-matrix-green">&gt;</span> ALL DATA:
-                ATTRIBUTED • TRANSPARENT • TRACEABLE
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* About Terminal */}
-      <section id="about" className="py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="terminal-window p-8">
-            <div className="window-header mb-6">
-              <span className="text-neon-magenta">[SYSTEM_INFO]</span>
-              <div className="window-controls">
-                <div className="window-control"></div>
-                <div className="window-control"></div>
-              </div>
-            </div>
-
-            <h2 className="text-3xl font-bold mb-6 text-matrix-green font-mono">
-              &gt; CYPHERPUNK_MANIFESTO
+      {/* Data Sources */}
+      <section className="py-16 bg-cream/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="heading-secondary mb-4">
+              Integrated Data Sources
             </h2>
+            <p className="text-stone max-w-2xl mx-auto">
+              Connected to the world's leading environmental monitoring networks
+            </p>
+          </div>
 
-            <div className="space-y-4 text-sm text-terminal-gray font-mono leading-relaxed">
-              <p>
-                <span className="text-matrix-green">&gt;&gt;</span> GAIA.AI
-                OPERATES ON PRINCIPLES OF{" "}
-                <span className="text-matrix-green glow-green">
-                  RADICAL_TRANSPARENCY
-                </span>
-                ,{" "}
-                <span className="text-neon-cyan glow-cyan">
-                  DECENTRALIZATION
-                </span>
-                , AND{" "}
-                <span className="text-neon-blue glow-blue">
-                  UNIVERSAL_ACCESS
-                </span>
-              </p>
-
-              <p>
-                <span className="text-matrix-green">&gt;&gt;</span>{" "}
-                ENVIRONMENTAL DATA MUST BE ACCESSIBLE TO ALL: CITIZENS •
-                RESEARCHERS • ACTIVISTS • POLICYMAKERS • ENGINEERS
-              </p>
-
-              <p>
-                <span className="text-matrix-green">&gt;&gt;</span> WEB1
-                SIMPLICITY [FAST, FUNCTIONAL, ACCESSIBLE]
-                <br />
-                <span className="text-matrix-green">&gt;&gt;</span> WEB2 POLISH
-                [BEAUTIFUL, INTUITIVE, POWERFUL]
-                <br />
-                <span className="text-matrix-green">&gt;&gt;</span> WEB4 VALUES
-                [OPEN, INTEROPERABLE, USER-CONTROLLED]
-              </p>
-
-              <div className="border border-matrix-green/40 bg-terminal-dark p-4 my-4">
-                <div className="text-xs text-matrix-green mb-2 uppercase tracking-widest">
-                  [MISSION_STATEMENT]
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            {[
+              { name: "NASA EOSDIS", status: "active" },
+              { name: "NOAA", status: "active" },
+              { name: "OpenAQ", status: "active" },
+              { name: "Copernicus", status: "active" },
+              { name: "Planet Labs", status: "active" },
+              { name: "Google Earth Engine", status: "active" },
+              { name: "GBIF", status: "active" },
+              { name: "Global Forest Watch", status: "active" },
+              { name: "Climate TRACE", status: "active" },
+              { name: "OpenWeatherMap", status: "active" },
+            ].map((source, i) => (
+              <div
+                key={i}
+                className="data-card p-4 text-center hover:border-sky-blue transition-all"
+              >
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <span
+                    className={`status-indicator status-${source.status}`}
+                  ></span>
                 </div>
-                <p className="text-neon-cyan">
-                  BUILD TOOLS THAT EMPOWER HUMANITY TO UNDERSTAND AND PROTECT
-                  OUR LIVING PLANET. DATA_LEGIBILITY = ENVIRONMENTAL_AGENCY.
-                </p>
+                <div className="text-xs font-semibold text-charcoal">
+                  {source.name}
+                </div>
               </div>
+            ))}
+          </div>
 
-              <p>
-                <span className="text-matrix-green">&gt;&gt;</span> JOIN THE
-                NETWORK. CONTRIBUTE CODE. SHARE DATA. BUILD THE FUTURE.
-              </p>
-            </div>
+          <div className="mt-8 text-center">
+            <a
+              href="/about#data"
+              className="text-sm text-rust-orange hover:text-rust-orange-dark font-semibold inline-flex items-center gap-2"
+            >
+              View all data sources →
+            </a>
+          </div>
+        </div>
+      </section>
 
-            <div className="mt-8 flex gap-4">
-              <button className="flex-1 px-6 py-3 bg-black border-2 border-matrix-green text-matrix-green hover:bg-matrix-green hover:text-black transition-all font-mono text-sm uppercase tracking-wider">
-                &gt; EXPLORE_SYSTEM.EXE
-              </button>
-              <button className="flex-1 px-6 py-3 bg-black border-2 border-neon-cyan text-neon-cyan hover:bg-neon-cyan hover:text-black transition-all font-mono text-sm uppercase tracking-wider">
-                &gt; JOIN_NETWORK.EXE
-              </button>
+      {/* CTA Section */}
+      <section className="py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="data-card p-8 sm:p-12 text-center gradient-warm">
+            <h2 className="heading-secondary mb-4 text-charcoal">
+              Start Exploring Environmental Data
+            </h2>
+            <p className="text-stone mb-8 max-w-2xl mx-auto">
+              Access comprehensive environmental intelligence through our AI-powered platform. Real-time monitoring, historical analysis, and future projections—all in one place.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a href="/demo" className="btn btn-secondary">
+                Launch Dashboard
+              </a>
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline"
+              >
+                View on GitHub
+              </a>
             </div>
           </div>
         </div>
