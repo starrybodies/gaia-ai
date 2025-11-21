@@ -1,6 +1,47 @@
-// OpenAQ API Response Types
+// WAQI API Response Types (replacing deprecated OpenAQ)
+export interface AirQualityData {
+  location: {
+    name: string;
+    coordinates: {
+      lat: number;
+      lon: number;
+    };
+  };
+  current: {
+    aqi: number;
+    level: string;
+    description: string;
+    dominantPollutant: string;
+    color: string;
+  };
+  pollutants: {
+    pm25: PollutantValue;
+    pm10: PollutantValue;
+    o3: PollutantValue;
+    no2: PollutantValue;
+    so2: PollutantValue;
+    co: PollutantValue;
+  };
+  weather?: {
+    temperature?: number;
+    humidity?: number;
+    pressure?: number;
+    wind?: number;
+  };
+  forecast: any | null;
+  attribution: string;
+  lastUpdated: string;
+}
+
+export interface PollutantValue {
+  value: number;
+  unit: string;
+  whoLimit: number;
+}
+
+// Legacy types for backwards compatibility
 export interface OpenAQMeasurement {
-  parameter: string; // pm25, pm10, o3, no2, so2, co
+  parameter: string;
   value: number;
   lastUpdated: string;
   unit: string;
@@ -21,28 +62,6 @@ export interface OpenAQLocation {
     longitude: number;
   };
   measurements: OpenAQMeasurement[];
-  lastUpdated: string;
-}
-
-// Simplified Air Quality Data for UI
-export interface SimpleAirQuality {
-  location: string;
-  city: string;
-  country: string;
-  coordinates: {
-    lat: number;
-    lon: number;
-  };
-  measurements: {
-    pm25?: number;
-    pm10?: number;
-    o3?: number;
-    no2?: number;
-    so2?: number;
-    co?: number;
-  };
-  aqi: number; // Calculated Air Quality Index
-  aqiLevel: string; // Good, Moderate, Unhealthy, etc.
   lastUpdated: string;
 }
 

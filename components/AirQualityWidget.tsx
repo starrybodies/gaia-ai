@@ -1,24 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { SimpleAirQuality } from "@/types/airquality";
+import type { AirQualityData } from "@/types/airquality";
 import { Gauge, HorizontalBars } from "./visualizations";
 
-// WHO guidelines for pollutant limits (µg/m³)
-const WHO_LIMITS = {
-  pm25: 15,  // Annual mean
-  pm10: 45,  // Annual mean
-  o3: 100,   // 8-hour mean
-  no2: 25,   // Annual mean
-  so2: 40,   // 24-hour mean
-  co: 4,     // mg/m³ 24-hour mean
-};
-
 export default function AirQualityWidget() {
-  const [airQuality, setAirQuality] = useState<SimpleAirQuality | null>(null);
+  const [airQuality, setAirQuality] = useState<AirQualityData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [city, setCity] = useState("Salt Spring Island, BC");
+  const [city, setCity] = useState("Salt Spring Island");
 
   const fetchAirQuality = async (cityName: string) => {
     setLoading(true);
@@ -58,56 +48,57 @@ export default function AirQualityWidget() {
 
   // AQI thresholds for gauge
   const aqiThresholds = [
-    { value: 20, color: "#00A7E1" },  // Good - blue
-    { value: 40, color: "#98D8C8" },  // Fair - mint
-    { value: 60, color: "#E8E8E8" },  // Moderate - white
-    { value: 80, color: "#FFB347" },  // Poor - light orange
-    { value: 100, color: "#FF8C42" }, // Very Poor - orange
+    { value: 50, color: "#00A7E1" },  // Good - blue
+    { value: 100, color: "#98D8C8" }, // Moderate - mint
+    { value: 150, color: "#FFB347" }, // Unhealthy Sensitive - light orange
+    { value: 200, color: "#FF8C42" }, // Unhealthy - orange
+    { value: 300, color: "#D2691E" }, // Very Unhealthy - burnt orange
   ];
 
   // Prepare pollutant bar data
   const getPollutantBars = () => {
     if (!airQuality) return [];
     const bars = [];
+    const p = airQuality.pollutants;
 
-    if (airQuality.measurements.pm25 !== undefined) {
+    if (p.pm25.value > 0) {
       bars.push({
         label: "PM2.5",
-        value: airQuality.measurements.pm25,
-        max: WHO_LIMITS.pm25 * 3,
-        color: airQuality.measurements.pm25 > WHO_LIMITS.pm25 ? "#FF8C42" : "#00A7E1",
+        value: p.pm25.value,
+        max: p.pm25.whoLimit * 3,
+        color: p.pm25.value > p.pm25.whoLimit ? "#FF8C42" : "#00A7E1",
       });
     }
-    if (airQuality.measurements.pm10 !== undefined) {
+    if (p.pm10.value > 0) {
       bars.push({
         label: "PM10",
-        value: airQuality.measurements.pm10,
-        max: WHO_LIMITS.pm10 * 3,
-        color: airQuality.measurements.pm10 > WHO_LIMITS.pm10 ? "#FF8C42" : "#00A7E1",
+        value: p.pm10.value,
+        max: p.pm10.whoLimit * 3,
+        color: p.pm10.value > p.pm10.whoLimit ? "#FF8C42" : "#00A7E1",
       });
     }
-    if (airQuality.measurements.o3 !== undefined) {
+    if (p.o3.value > 0) {
       bars.push({
-        label: "O₃",
-        value: airQuality.measurements.o3,
-        max: WHO_LIMITS.o3 * 2,
-        color: airQuality.measurements.o3 > WHO_LIMITS.o3 ? "#FF8C42" : "#00A7E1",
+        label: "O3",
+        value: p.o3.value,
+        max: p.o3.whoLimit * 2,
+        color: p.o3.value > p.o3.whoLimit ? "#FF8C42" : "#00A7E1",
       });
     }
-    if (airQuality.measurements.no2 !== undefined) {
+    if (p.no2.value > 0) {
       bars.push({
-        label: "NO₂",
-        value: airQuality.measurements.no2,
-        max: WHO_LIMITS.no2 * 3,
-        color: airQuality.measurements.no2 > WHO_LIMITS.no2 ? "#FF8C42" : "#00A7E1",
+        label: "NO2",
+        value: p.no2.value,
+        max: p.no2.whoLimit * 3,
+        color: p.no2.value > p.no2.whoLimit ? "#FF8C42" : "#00A7E1",
       });
     }
-    if (airQuality.measurements.so2 !== undefined) {
+    if (p.so2.value > 0) {
       bars.push({
-        label: "SO₂",
-        value: airQuality.measurements.so2,
-        max: WHO_LIMITS.so2 * 2,
-        color: airQuality.measurements.so2 > WHO_LIMITS.so2 ? "#FF8C42" : "#00A7E1",
+        label: "SO2",
+        value: p.so2.value,
+        max: p.so2.whoLimit * 2,
+        color: p.so2.value > p.so2.whoLimit ? "#FF8C42" : "#00A7E1",
       });
     }
 
@@ -125,14 +116,14 @@ export default function AirQualityWidget() {
         </div>
       </div>
 
-      {/* Demo mode banner */}
+      {/* API status banner */}
       <div className="mb-4 border border-blue bg-code p-3">
         <div className="flex items-center gap-2 text-blue text-xs font-mono">
           <span className="status-indicator status-active"></span>
           <div>
-            <div className="font-bold uppercase">OPENAQ_CONNECTED</div>
+            <div className="font-bold uppercase">WAQI_CONNECTED</div>
             <div className="text-[10px] text-white-dim">
-              REAL-TIME AIR QUALITY DATA • 10,000+ STATIONS
+              WORLD AIR QUALITY INDEX • 12,000+ STATIONS
             </div>
           </div>
         </div>
@@ -181,10 +172,10 @@ export default function AirQualityWidget() {
               {/* Gauge */}
               <div className="flex-shrink-0">
                 <Gauge
-                  value={airQuality.aqi}
+                  value={airQuality.current.aqi}
                   min={0}
-                  max={200}
-                  label={airQuality.aqiLevel.toUpperCase()}
+                  max={300}
+                  label={airQuality.current.level.toUpperCase()}
                   thresholds={aqiThresholds}
                   size="md"
                 />
@@ -193,17 +184,17 @@ export default function AirQualityWidget() {
               {/* Location info */}
               <div className="flex-1">
                 <h3 className="text-xl font-bold text-white uppercase tracking-wider mb-1">
-                  {airQuality.city}
+                  {airQuality.location.name}
                 </h3>
                 <div className="text-xs text-white-dim uppercase tracking-widest mb-3">
-                  {airQuality.country}
+                  {airQuality.current.description}
                 </div>
                 <div className="text-xs text-white-dim font-mono">
                   <div className="mb-1">
-                    <span className="text-blue">&gt;</span> AQI_SCALE: 0-50 GOOD, 51-100 MODERATE
+                    <span className="text-blue">&gt;</span> DOMINANT: {airQuality.current.dominantPollutant.toUpperCase()}
                   </div>
                   <div>
-                    <span className="text-blue">&gt;</span> 101-150 UNHEALTHY_SENSITIVE, 151+ UNHEALTHY
+                    <span className="text-blue">&gt;</span> AQI: 0-50 GOOD, 51-100 MODERATE, 101+ UNHEALTHY
                   </div>
                 </div>
               </div>
@@ -225,14 +216,44 @@ export default function AirQualityWidget() {
             </div>
           </div>
 
+          {/* Weather data if available */}
+          {airQuality.weather && (airQuality.weather.temperature !== undefined || airQuality.weather.humidity !== undefined) && (
+            <div className="grid grid-cols-4 gap-3 text-xs font-mono mb-6">
+              {airQuality.weather.temperature !== undefined && (
+                <div className="border border-white p-3">
+                  <div className="text-white-dim uppercase mb-1 text-[10px]">TEMP</div>
+                  <div className="text-white text-lg">{airQuality.weather.temperature}°</div>
+                </div>
+              )}
+              {airQuality.weather.humidity !== undefined && (
+                <div className="border border-white p-3">
+                  <div className="text-white-dim uppercase mb-1 text-[10px]">HUMIDITY</div>
+                  <div className="text-white text-lg">{airQuality.weather.humidity}%</div>
+                </div>
+              )}
+              {airQuality.weather.pressure !== undefined && (
+                <div className="border border-white p-3">
+                  <div className="text-white-dim uppercase mb-1 text-[10px]">PRESSURE</div>
+                  <div className="text-white text-lg">{airQuality.weather.pressure}</div>
+                </div>
+              )}
+              {airQuality.weather.wind !== undefined && (
+                <div className="border border-white p-3">
+                  <div className="text-white-dim uppercase mb-1 text-[10px]">WIND</div>
+                  <div className="text-white text-lg">{airQuality.weather.wind}</div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Info panel */}
           <div className="border border-blue bg-code p-4">
             <div className="text-xs text-white-dim font-mono space-y-1">
               <div>
-                <span className="text-blue">&gt;</span> WHO_LIMITS: PM2.5 {WHO_LIMITS.pm25}µg/m³ • PM10 {WHO_LIMITS.pm10}µg/m³
+                <span className="text-blue">&gt;</span> WHO_LIMITS: PM2.5 {airQuality.pollutants.pm25.whoLimit}µg/m³ • PM10 {airQuality.pollutants.pm10.whoLimit}µg/m³
               </div>
               <div>
-                <span className="text-blue">&gt;</span> O₃ {WHO_LIMITS.o3}µg/m³ • NO₂ {WHO_LIMITS.no2}µg/m³ • SO₂ {WHO_LIMITS.so2}µg/m³
+                <span className="text-blue">&gt;</span> O3 {airQuality.pollutants.o3.whoLimit}µg/m³ • NO2 {airQuality.pollutants.no2.whoLimit}µg/m³ • SO2 {airQuality.pollutants.so2.whoLimit}µg/m³
               </div>
             </div>
           </div>
@@ -240,10 +261,10 @@ export default function AirQualityWidget() {
           {/* Status bar */}
           <div className="mt-6 pt-4 border-t border-white flex justify-between text-[10px] text-white-dim uppercase tracking-widest">
             <div>
-              DATA_SOURCE: <span className="text-blue">OPENAQ_API</span>
+              SOURCE: <span className="text-blue">{airQuality.attribution.toUpperCase()}</span>
             </div>
             <div>
-              LAST_UPDATE:{" "}
+              UPDATED:{" "}
               <span className="text-blue">
                 {new Date(airQuality.lastUpdated).toLocaleTimeString()}
               </span>
