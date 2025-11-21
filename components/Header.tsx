@@ -22,14 +22,16 @@ export default function Header() {
           {/* Navigation - Command line style */}
           <nav className="hidden md:flex items-center gap-1">
             {[
-              { label: "[ABOUT]", href: "#about" },
-              { label: "[MODULES]", href: "#features" },
-              { label: "[DATA]", href: "#data" },
+              { label: "[ABOUT]", href: "/about" },
+              { label: "[DEMO]", href: "/demo" },
+              { label: "[DATA]", href: "/about#data" },
               { label: "[SRC]", href: "https://github.com" },
             ].map((item, i) => (
               <a
                 key={i}
                 href={item.href}
+                target={item.href.startsWith("http") ? "_blank" : undefined}
+                rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
                 className="px-3 py-1 text-xs text-terminal-gray hover:text-matrix-green hover:bg-terminal-dark border border-transparent hover:border-matrix-green transition-all uppercase tracking-wider"
               >
                 {item.label}

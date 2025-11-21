@@ -1,3 +1,5 @@
+import InteractiveConsole from "@/components/InteractiveConsole";
+
 export default function Home() {
   return (
     <div className="bg-black min-h-screen">
@@ -129,6 +131,20 @@ export default function Home() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-matrix-green"></span>
             </span>
             <span>ALPHA_v0.1.0 • OPEN_SOURCE • DECENTRALIZED</span>
+          </div>
+
+          {/* Interactive Console */}
+          <div className="mt-8">
+            <InteractiveConsole />
+          </div>
+
+          {/* Try commands hint */}
+          <div className="mt-4 text-center text-xs text-terminal-gray font-mono">
+            <span className="text-neon-cyan">TIP:</span> Try commands like{" "}
+            <span className="text-matrix-green">status</span>,{" "}
+            <span className="text-matrix-green">data</span>,{" "}
+            <span className="text-matrix-green">modules</span>, or{" "}
+            <span className="text-matrix-green">demo</span>
           </div>
         </div>
       </section>
