@@ -3,6 +3,7 @@ import type {
   BiodiversityData,
   GBIFOccurrence,
 } from "@/types/biodiversity";
+import { valueBiodiversity, formatCurrency } from "@/lib/valuation";
 
 // Transform GBIF occurrence data to simplified format
 export function transformBiodiversityData(
@@ -52,6 +53,12 @@ export function transformBiodiversityData(
   const occurrences = Array.from(speciesMap.values())
     .sort((a, b) => b.count - a.count);
 
+  // Calculate valuation
+  const uniqueSpecies = speciesMap.size;
+  const analysisAreaHa = 31400; // ~10km radius
+  const atRiskSpecies = Math.round(uniqueSpecies * 0.15); // Estimate ~15% at risk
+  const bioVal = valueBiodiversity(uniqueSpecies, analysisAreaHa, atRiskSpecies);
+
   return {
     location: {
       lat,
@@ -63,6 +70,30 @@ export function transformBiodiversityData(
       totalOccurrences: data.count,
       uniqueSpecies: speciesMap.size,
       kingdoms: kingdomCounts,
+    },
+    valuation: {
+      naturalCapital: {
+        annualTotal: bioVal.annualServices.total,
+        annualTotalFormatted: formatCurrency(bioVal.annualServices.total),
+      },
+      annualEcosystemServices: {
+        total: bioVal.annualServices.total,
+        totalFormatted: formatCurrency(bioVal.annualServices.total),
+        breakdown: {
+          existenceValue: { value: bioVal.annualServices.existenceValue, formatted: formatCurrency(bioVal.annualServices.existenceValue) },
+          geneticResources: { value: bioVal.annualServices.geneticResources, formatted: formatCurrency(bioVal.annualServices.geneticResources) },
+          pollination: { value: bioVal.annualServices.pollination, formatted: formatCurrency(bioVal.annualServices.pollination) },
+          pestControl: { value: bioVal.annualServices.pestControl, formatted: formatCurrency(bioVal.annualServices.pestControl) },
+          seedDispersal: { value: bioVal.annualServices.seedDispersal, formatted: formatCurrency(bioVal.annualServices.seedDispersal) },
+        },
+      },
+      extinctionRisk: {
+        atRiskSpecies: bioVal.extinctionRisk.atRiskSpecies,
+        potentialLossValue: bioVal.extinctionRisk.potentialLossValue,
+        potentialLossValueFormatted: formatCurrency(bioVal.extinctionRisk.potentialLossValue),
+      },
+      analysisArea: `${Math.round(analysisAreaHa / 100)} km² (~10km radius)`,
+      methodology: "TEEB Biodiversity & Ecosystem Services Valuation",
     },
   };
 }
@@ -93,6 +124,12 @@ export function getMockBiodiversityData(
     kingdoms[s.kingdom] = (kingdoms[s.kingdom] || 0) + s.count;
   });
 
+  // Calculate valuation
+  const uniqueSpecies = mockSpecies.length;
+  const analysisAreaHa = 31400; // ~10km radius
+  const atRiskSpecies = Math.round(uniqueSpecies * 0.15); // Estimate ~15% at risk
+  const bioVal = valueBiodiversity(uniqueSpecies, analysisAreaHa, atRiskSpecies);
+
   return {
     location: {
       lat,
@@ -110,6 +147,30 @@ export function getMockBiodiversityData(
       totalOccurrences,
       uniqueSpecies: mockSpecies.length,
       kingdoms,
+    },
+    valuation: {
+      naturalCapital: {
+        annualTotal: bioVal.annualServices.total,
+        annualTotalFormatted: formatCurrency(bioVal.annualServices.total),
+      },
+      annualEcosystemServices: {
+        total: bioVal.annualServices.total,
+        totalFormatted: formatCurrency(bioVal.annualServices.total),
+        breakdown: {
+          existenceValue: { value: bioVal.annualServices.existenceValue, formatted: formatCurrency(bioVal.annualServices.existenceValue) },
+          geneticResources: { value: bioVal.annualServices.geneticResources, formatted: formatCurrency(bioVal.annualServices.geneticResources) },
+          pollination: { value: bioVal.annualServices.pollination, formatted: formatCurrency(bioVal.annualServices.pollination) },
+          pestControl: { value: bioVal.annualServices.pestControl, formatted: formatCurrency(bioVal.annualServices.pestControl) },
+          seedDispersal: { value: bioVal.annualServices.seedDispersal, formatted: formatCurrency(bioVal.annualServices.seedDispersal) },
+        },
+      },
+      extinctionRisk: {
+        atRiskSpecies: bioVal.extinctionRisk.atRiskSpecies,
+        potentialLossValue: bioVal.extinctionRisk.potentialLossValue,
+        potentialLossValueFormatted: formatCurrency(bioVal.extinctionRisk.potentialLossValue),
+      },
+      analysisArea: `${Math.round(analysisAreaHa / 100)} km² (~10km radius)`,
+      methodology: "TEEB Biodiversity & Ecosystem Services Valuation",
     },
   };
 }

@@ -14,11 +14,18 @@ export async function GET(request: NextRequest) {
   const lon = parseFloat(searchParams.get("lon") || "-122.4194");
 
   try {
-    // Search for occurrences within 10km of the location
-    const distance = 10; // km
-    const url = `${GBIF_BASE_URL}/occurrence/search?decimalLatitude=${lat}&decimalLongitude=${lon}&limit=100&offset=0`;
+    // Search for occurrences within a bounding box around the location
+    // GBIF uses geoDistance parameter for radius search
+    const radius = 0.5; // ~50km in degrees
+    const minLat = lat - radius;
+    const maxLat = lat + radius;
+    const minLon = lon - radius;
+    const maxLon = lon + radius;
 
-    console.log(`[GBIF API] Fetching biodiversity data near ${location}`);
+    // Use bounding box for better results
+    const url = `${GBIF_BASE_URL}/occurrence/search?decimalLatitude=${minLat},${maxLat}&decimalLongitude=${minLon},${maxLon}&limit=300&hasCoordinate=true&hasGeospatialIssue=false`;
+
+    console.log(`[GBIF API] Fetching biodiversity data near ${location} (${lat}, ${lon})`);
 
     const response = await fetch(url, {
       headers: {

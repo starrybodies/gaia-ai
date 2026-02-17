@@ -90,33 +90,81 @@ function getMockWeatherData(city: string) {
   };
 }
 
+// Reverse geocode to get location name from coordinates
+async function reverseGeocode(lat: number, lon: number): Promise<{ name: string; country: string }> {
+  try {
+    const response = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&count=1`
+    );
+    if (response.ok) {
+      const data = await response.json();
+      if (data.results?.[0]) {
+        const r = data.results[0];
+        return {
+          name: r.name || `${lat.toFixed(2)}°, ${lon.toFixed(2)}°`,
+          country: r.country_code || r.country || "",
+        };
+      }
+    }
+  } catch {}
+  return { name: `${lat.toFixed(2)}°, ${lon.toFixed(2)}°`, country: "" };
+}
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  const city = searchParams.get("city") || "Salt Spring Island";
-  const lat = searchParams.get("lat");
-  const lon = searchParams.get("lon");
+  const city = searchParams.get("city") || "";
+  const latParam = searchParams.get("lat");
+  const lonParam = searchParams.get("lon");
 
   try {
     let coordinates: { lat: number; lon: number; name: string; country: string };
 
-    // Use provided coordinates or geocode the city
-    if (lat && lon) {
-      coordinates = {
-        lat: parseFloat(lat),
-        lon: parseFloat(lon),
-        name: city,
-        country: "",
-      };
-    } else {
+    // Priority 1: Use provided lat/lon coordinates directly
+    if (latParam && lonParam) {
+      const lat = parseFloat(latParam);
+      const lon = parseFloat(lonParam);
+
+      if (!isNaN(lat) && !isNaN(lon)) {
+        // Get location name via reverse geocoding if city name looks like coordinates
+        let locationInfo = { name: city, country: "" };
+        if (!city || city.includes("°") || city.match(/^-?\d+\.\d+,/)) {
+          locationInfo = await reverseGeocode(lat, lon);
+        }
+
+        coordinates = {
+          lat,
+          lon,
+          name: locationInfo.name || city || `${lat.toFixed(2)}°, ${lon.toFixed(2)}°`,
+          country: locationInfo.country,
+        };
+
+        console.log(`[WEATHER] Using coordinates: ${lat}, ${lon} (${coordinates.name})`);
+      } else {
+        // Invalid coordinates, try geocoding city
+        const geocoded = await geocodeCity(city || "New York");
+        if (!geocoded) {
+          return NextResponse.json(getMockWeatherData(city || "Unknown"));
+        }
+        coordinates = geocoded;
+      }
+    }
+    // Priority 2: Geocode city name
+    else if (city) {
       const geocoded = await geocodeCity(city);
       if (!geocoded) {
-        console.log(`[OPEN-METEO] Could not geocode ${city}, using mock data`);
+        console.log(`[WEATHER] Could not geocode "${city}", using mock data`);
         return NextResponse.json(getMockWeatherData(city));
       }
       coordinates = geocoded;
+      console.log(`[WEATHER] Geocoded "${city}" to ${coordinates.lat}, ${coordinates.lon}`);
+    }
+    // Fallback to default
+    else {
+      console.log(`[WEATHER] No location provided, using mock data`);
+      return NextResponse.json(getMockWeatherData("Unknown Location"));
     }
 
-    console.log(`[OPEN-METEO] Fetching weather for ${coordinates.name} (${coordinates.lat}, ${coordinates.lon})`);
+    console.log(`[WEATHER] Fetching data for ${coordinates.name} (${coordinates.lat.toFixed(4)}, ${coordinates.lon.toFixed(4)})`);
 
     // Fetch weather data from Open-Meteo
     const weatherUrl = `${WEATHER_URL}?latitude=${coordinates.lat}&longitude=${coordinates.lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,cloud_cover,pressure_msl,wind_speed_10m,wind_direction_10m&hourly=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,pressure_msl&daily=weather_code,temperature_2m_max,temperature_2m_min,wind_speed_10m_max&timezone=auto&forecast_days=7`;

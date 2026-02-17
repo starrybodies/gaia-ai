@@ -15,20 +15,33 @@ import {
 } from "recharts";
 import type { ClimateData } from "@/types/climate";
 
-export default function ClimateWidget() {
+interface ClimateWidgetProps {
+  defaultLocation?: string;
+  defaultLat?: number;
+  defaultLon?: number;
+}
+
+export default function ClimateWidget({
+  defaultLocation = "Salt Spring Island, BC",
+  defaultLat = 48.8167,
+  defaultLon = -123.5,
+}: ClimateWidgetProps) {
   const [climateData, setClimateData] = useState<ClimateData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [location, setLocation] = useState("Salt Spring Island, BC");
+  const [location, setLocation] = useState(defaultLocation);
+  const [coords, setCoords] = useState({ lat: defaultLat, lon: defaultLon });
 
-  const fetchClimateData = async (locationName: string) => {
+  const fetchClimateData = async (locationName: string, lat?: number, lon?: number) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(
-        `/api/climate?location=${encodeURIComponent(locationName)}`
-      );
+      let url = `/api/climate?location=${encodeURIComponent(locationName)}`;
+      if (lat !== undefined && lon !== undefined) {
+        url += `&lat=${lat}&lon=${lon}`;
+      }
+      const response = await fetch(url);
 
       if (!response.ok) {
         throw new Error("Failed to fetch climate data");
@@ -44,7 +57,7 @@ export default function ClimateWidget() {
   };
 
   useEffect(() => {
-    fetchClimateData(location);
+    fetchClimateData(location, coords.lat, coords.lon);
   }, []);
 
   const handleLocationChange = (e: React.FormEvent<HTMLFormElement>) => {

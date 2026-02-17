@@ -57,6 +57,22 @@ const DEFAULT_LAYERS: MapLayer[] = [
     active: false,
     opacity: 0.8,
   },
+  {
+    id: "waterways",
+    name: "WATERWAYS",
+    type: "tile",
+    url: "https://tiles.openstreetmap.org/{z}/{x}/{y}.png",
+    active: false,
+    opacity: 0.5,
+  },
+  {
+    id: "protected-areas",
+    name: "PROTECTED",
+    type: "tile",
+    url: "https://data.source.coop/giswqs/nwi/raster/{z}/{x}/{y}.png",
+    active: false,
+    opacity: 0.6,
+  },
 ];
 
 export default function MapViewWidget({
@@ -70,6 +86,64 @@ export default function MapViewWidget({
   const [zoom, setZoom] = useState(defaultZoom);
   const [location, setLocation] = useState(defaultLocation);
   const [cursorCoords, setCursorCoords] = useState<{ lat: number; lon: number } | null>(null);
+  const [mapReady, setMapReady] = useState(false);
+  const [clickedMarkers, setClickedMarkers] = useState<Array<{ lat: number; lon: number; data?: any }>>([]);
+
+  // Trigger map ready after mount to ensure proper rendering
+  useEffect(() => {
+    const timer = setTimeout(() => setMapReady(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Handle map click - fetch comprehensive environmental assessment
+  const handleMapClick = async (coords: { lat: number; lon: number }) => {
+    console.log(`[MAP] Analyzing environment at ${coords.lat}, ${coords.lon}`);
+
+    // Add marker with loading state
+    const newMarker = { lat: coords.lat, lon: coords.lon, data: { loading: true } };
+    setClickedMarkers(prev => [...prev, newMarker]);
+    const markerIndex = clickedMarkers.length;
+
+    try {
+      // Fetch comprehensive environmental assessment via Python service
+      const response = await fetch(`http://localhost:5001/environmental-assessment?lat=${coords.lat}&lon=${coords.lon}`);
+
+      if (!response.ok) {
+        throw new Error('Assessment failed');
+      }
+
+      const assessment = await response.json();
+
+      // Update marker with assessment data
+      setClickedMarkers(prev => {
+        const updated = [...prev];
+        updated[markerIndex] = {
+          lat: coords.lat,
+          lon: coords.lon,
+          data: {
+            loading: false,
+            assessment
+          }
+        };
+        return updated;
+      });
+    } catch (error) {
+      console.error('[MAP] Error fetching environmental assessment:', error);
+      // Update marker with error
+      setClickedMarkers(prev => {
+        const updated = [...prev];
+        updated[markerIndex] = {
+          lat: coords.lat,
+          lon: coords.lon,
+          data: {
+            loading: false,
+            error: 'Failed to assess location'
+          }
+        };
+        return updated;
+      });
+    }
+  };
 
   const toggleLayer = (layerId: string) => {
     setLayers((prev) =>
@@ -91,7 +165,7 @@ export default function MapViewWidget({
   };
 
   return (
-    <div className="terminal-window p-6 h-full flex flex-col">
+    <div className="terminal-window p-6">
       <div className="window-header mb-4">
         <span className="text-blue">[MAP_VIEW_MODULE]</span>
         <div className="window-controls">
@@ -158,15 +232,19 @@ export default function MapViewWidget({
         ))}
       </div>
 
-      {/* Map container */}
-      <div className="flex-1 min-h-[400px] relative">
-        <MapViewCore
-          center={[coordinates.lat, coordinates.lon]}
-          zoom={zoom}
-          layers={layers}
-          onZoomChange={setZoom}
-          onCursorMove={setCursorCoords}
-        />
+      {/* Map container - fixed height for Leaflet */}
+      <div className="h-[600px] relative">
+        {mapReady && (
+          <MapViewCore
+            center={[coordinates.lat, coordinates.lon]}
+            zoom={zoom}
+            layers={layers}
+            onZoomChange={setZoom}
+            onCursorMove={setCursorCoords}
+            onMapClick={handleMapClick}
+            clickedMarkers={clickedMarkers}
+          />
+        )}
 
         {/* Coordinate overlay */}
         <div className="absolute bottom-0 left-0 right-0 bg-terminal bg-opacity-90 border-t border-white p-2 z-[1000]">
@@ -189,15 +267,37 @@ export default function MapViewWidget({
       {/* Info panel */}
       <div className="mt-4 border border-white bg-code p-3">
         <div className="text-xs text-white-dim font-mono space-y-1">
-          <div>
-            <span className="text-blue">&gt;</span> BIODIVERSITY: GBIF species occurrence density (2B+ records)
+          <div className="font-bold text-white mb-2">
+            <span className="text-blue">&gt;</span> ENVIRONMENTAL INTELLIGENCE SYSTEM
           </div>
           <div>
-            <span className="text-blue">&gt;</span> SATELLITE: ESRI World Imagery (high-resolution)
+            <span className="text-blue">&gt;</span> CLICK ANY LOCATION for comprehensive environmental assessment
           </div>
-          <div>
-            <span className="text-blue">&gt;</span> TERRAIN: Stamen terrain with hillshading
+          <div className="ml-4 text-[10px]">
+            • Vegetation health (NDVI from Sentinel-2)
           </div>
+          <div className="ml-4 text-[10px]">
+            • Land cover analysis (ESA WorldCover)
+          </div>
+          <div className="ml-4 text-[10px]">
+            • Water resources (JRC Global Surface Water)
+          </div>
+          <div className="ml-4 text-[10px]">
+            • Overall health score (0-100) with recommendations
+          </div>
+          <div className="border-t border-white-dim mt-2 pt-2">
+            <div className="font-bold text-white mb-1">AVAILABLE LAYERS</div>
+            <div className="ml-4 text-[10px]">• BIODIVERSITY: Species occurrence (GBIF)</div>
+            <div className="ml-4 text-[10px]">• SATELLITE: High-res imagery (ESRI)</div>
+            <div className="ml-4 text-[10px]">• TERRAIN: Elevation & hillshading</div>
+            <div className="ml-4 text-[10px]">• WATERWAYS: Rivers & water bodies (OSM)</div>
+            <div className="ml-4 text-[10px]">• PROTECTED: Conservation areas</div>
+          </div>
+          {clickedMarkers.length > 0 && (
+            <div className="border-t border-white-dim mt-2 pt-2">
+              <span className="text-white">&gt;</span> ANALYZED LOCATIONS: <span className="text-blue">{clickedMarkers.length}</span>
+            </div>
+          )}
         </div>
       </div>
 

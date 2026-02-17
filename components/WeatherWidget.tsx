@@ -17,22 +17,37 @@ import {
   transformForecastToChartData,
 } from "@/lib/weather";
 
-export default function WeatherWidget() {
+interface WeatherWidgetProps {
+  defaultLocation?: string;
+  defaultLat?: number;
+  defaultLon?: number;
+}
+
+export default function WeatherWidget({
+  defaultLocation = "Salt Spring Island, BC",
+  defaultLat = 48.8167,
+  defaultLon = -123.5,
+}: WeatherWidgetProps) {
   const [weather, setWeather] = useState<SimpleWeather | null>(null);
   const [forecast, setForecast] = useState<SimpleForecast[]>([]);
   const [chartData, setChartData] = useState<WeatherChartData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [city, setCity] = useState("Salt Spring Island, BC");
+  const [city, setCity] = useState(defaultLocation);
+  const [coords, setCoords] = useState({ lat: defaultLat, lon: defaultLon });
 
-  const fetchWeather = async (cityName: string) => {
+  const fetchWeather = async (cityName: string, lat?: number, lon?: number) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(
-        `/api/weather?city=${encodeURIComponent(cityName)}`
-      );
+      // Build URL with coordinates if available
+      let url = `/api/weather?city=${encodeURIComponent(cityName)}`;
+      if (lat !== undefined && lon !== undefined) {
+        url += `&lat=${lat}&lon=${lon}`;
+      }
+
+      const response = await fetch(url);
 
       if (!response.ok) {
         throw new Error("Failed to fetch weather data");
@@ -51,7 +66,7 @@ export default function WeatherWidget() {
   };
 
   useEffect(() => {
-    fetchWeather(city);
+    fetchWeather(city, coords.lat, coords.lon);
   }, []);
 
   const handleCityChange = (e: React.FormEvent<HTMLFormElement>) => {
@@ -60,6 +75,8 @@ export default function WeatherWidget() {
     const newCity = formData.get("city") as string;
     if (newCity.trim()) {
       setCity(newCity);
+      // Clear coords when manually entering a city name - let API geocode it
+      setCoords({ lat: undefined as any, lon: undefined as any });
       fetchWeather(newCity);
     }
   };

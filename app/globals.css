@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
 
 /* Cypherpunk Code Style - Burnt Orange Edition */
 :root {
@@ -26,6 +27,40 @@
   --card-bg: var(--terminal-bg);
   --border: var(--white);
   --border-dim: rgba(255, 255, 255, 0.3);
+
+  /* Semantic */
+  --success: var(--blue);
+  --warning: var(--orange-light);
+  --error: var(--white);
+  --info: var(--blue-bright);
+}
+
+/* Dark Mode - Slate Black Edition */
+[data-theme="dark"] {
+  /* Base - Slate black terminal */
+  --background: #0f172a;
+  --background-dark: #020617;
+  --foreground: #FF8C42;
+
+  /* Code color palette - Orange text, Slate backgrounds, Blue accents */
+  --white: #FFFFFF;
+  --white-dim: #94a3b8;
+  --orange: #0f172a;
+  --orange-light: #FF8C42;
+  --orange-dark: #020617;
+  --blue: #00A7E1;
+  --blue-bright: #00D4FF;
+  --blue-dark: #0088CC;
+
+  /* Terminal colors */
+  --terminal-bg: #1e293b;
+  --terminal-border: #FF8C42;
+  --code-bg: #334155;
+
+  /* UI elements - Sharp, code-style */
+  --card-bg: var(--terminal-bg);
+  --border: #FF8C42;
+  --border-dim: rgba(255, 140, 66, 0.3);
 
   /* Semantic */
   --success: var(--blue);
@@ -89,7 +124,7 @@ body {
   letter-spacing: 0.02em;
 }
 
-/* Subtle texture */
+/* Subtle texture - z-index lowered to not block interactive elements like maps */
 body::before {
   content: "";
   position: fixed;
@@ -105,7 +140,7 @@ body::before {
     transparent 2px,
     rgba(255, 255, 255, 0.02) 3px
   );
-  z-index: 9999;
+  z-index: 1;
 }
 
 /* Custom scrollbar */
@@ -146,6 +181,40 @@ body::before {
   border: 2px solid var(--border);
   position: relative;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+/* Widget content spacing improvements */
+.terminal-window > .p-6 {
+  padding: 1.5rem;
+}
+
+.terminal-window .mb-6 {
+  margin-bottom: 1.75rem;
+}
+
+.terminal-window .grid {
+  gap: 1rem;
+}
+
+/* Natural capital value sections - more prominent */
+.terminal-window .border-2.border-blue {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+}
+
+/* Better grid spacing inside widgets */
+.terminal-window .grid.grid-cols-2 {
+  gap: 1rem;
+}
+
+.terminal-window .grid.grid-cols-3 {
+  gap: 0.75rem;
+}
+
+.terminal-window .grid.grid-cols-4 {
+  gap: 0.75rem;
 }
 
 /* Window header */
@@ -422,4 +491,133 @@ input:focus, textarea:focus {
 input::placeholder, textarea::placeholder {
   color: var(--white-dim);
   opacity: 0.5;
+}
+
+/* Leaflet Map Styles */
+.leaflet-container {
+  background: #1a1a1a;
+  font-family: monospace;
+}
+
+/* Custom zoom controls */
+.leaflet-control-zoom {
+  border: 1px solid #ffffff !important;
+  border-radius: 0 !important;
+  background: #D2691E !important;
+}
+
+.leaflet-control-zoom a {
+  background: #D2691E !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-bottom: 1px solid #ffffff !important;
+  font-family: monospace !important;
+  font-weight: bold !important;
+  width: 30px !important;
+  height: 30px !important;
+  line-height: 30px !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: #00A7E1 !important;
+  color: #ffffff !important;
+}
+
+.leaflet-control-zoom a:last-child {
+  border-bottom: none !important;
+}
+
+/* Attribution styling */
+.leaflet-control-attribution {
+  background: rgba(210, 105, 30, 0.9) !important;
+  color: #ffffff !important;
+  font-family: monospace !important;
+  font-size: 9px !important;
+  padding: 2px 6px !important;
+}
+
+.leaflet-control-attribution a {
+  color: #00A7E1 !important;
+}
+
+/* Popup styling */
+.leaflet-popup-content-wrapper {
+  background: #D2691E !important;
+  border: 1px solid #ffffff !important;
+  border-radius: 0 !important;
+  color: #ffffff !important;
+  font-family: monospace !important;
+}
+
+.leaflet-popup-tip {
+  background: #D2691E !important;
+  border: 1px solid #ffffff !important;
+}
+
+.leaflet-popup-close-button {
+  color: #ffffff !important;
+}
+
+/* Scale control */
+.leaflet-control-scale-line {
+  background: rgba(210, 105, 30, 0.9) !important;
+  border: 1px solid #ffffff !important;
+  border-top: none !important;
+  color: #ffffff !important;
+  font-family: monospace !important;
+  font-size: 10px !important;
+}
+
+/* Custom marker pulse animation */
+@keyframes marker-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 167, 225, 0.5); }
+  70% { box-shadow: 0 0 0 15px rgba(0, 167, 225, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 167, 225, 0); }
+}
+
+.custom-marker > div {
+  animation: marker-pulse 2s infinite;
+}
+
+/* Dark Mode Leaflet Overrides */
+[data-theme="dark"] .leaflet-control-zoom {
+  background: #1e293b !important;
+  border-color: #FF8C42 !important;
+}
+
+[data-theme="dark"] .leaflet-control-zoom a {
+  background: #1e293b !important;
+  color: #FF8C42 !important;
+  border-bottom-color: #FF8C42 !important;
+}
+
+[data-theme="dark"] .leaflet-control-zoom a:hover {
+  background: #00A7E1 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .leaflet-control-attribution {
+  background: rgba(30, 41, 59, 0.9) !important;
+  color: #FF8C42 !important;
+}
+
+[data-theme="dark"] .leaflet-popup-content-wrapper {
+  background: #1e293b !important;
+  border-color: #FF8C42 !important;
+  color: #FF8C42 !important;
+}
+
+[data-theme="dark"] .leaflet-popup-tip {
+  background: #1e293b !important;
+  border-color: #FF8C42 !important;
+}
+
+[data-theme="dark"] .leaflet-popup-close-button {
+  color: #FF8C42 !important;
+}
+
+[data-theme="dark"] .leaflet-control-scale-line {
+  background: rgba(30, 41, 59, 0.9) !important;
+  border-color: #FF8C42 !important;
+  color: #FF8C42 !important;
 }

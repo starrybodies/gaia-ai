@@ -287,6 +287,44 @@ export default function OceanWidget() {
             </ResponsiveContainer>
           </div>
 
+          {/* Natural Capital Valuation */}
+          {(oceanData as any).valuation && (
+            <div className="border-2 border-blue bg-code p-4 mb-6">
+              <div className="text-blue uppercase text-xs tracking-widest mb-3 font-mono font-bold">
+                <span className="text-white">$$</span> MARINE_ECOSYSTEM_VALUE
+              </div>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div className="border border-white p-3">
+                  <div className="text-white-dim uppercase mb-1 text-[10px]">ANNUAL_TOTAL</div>
+                  <div className="text-blue text-xl font-bold">{(oceanData as any).valuation.naturalCapital.annualTotalFormatted}</div>
+                  <div className="text-[10px] text-white-dim">ECOSYSTEM SERVICES</div>
+                </div>
+                <div className="border border-white p-3">
+                  <div className="text-white-dim uppercase mb-1 text-[10px]">CLIMATE_RISK</div>
+                  <div className="text-orange text-xl font-bold">{(oceanData as any).valuation.climateRisks.totalAnnualRiskFormatted}</div>
+                  <div className="text-[10px] text-white-dim">ANNUAL COST</div>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-[10px] font-mono">
+                <div className="border border-white p-2">
+                  <div className="text-white-dim mb-1">FISHERIES</div>
+                  <div className="text-white">{(oceanData as any).valuation.annualEcosystemServices.breakdown.fisheries.formatted}</div>
+                </div>
+                <div className="border border-white p-2">
+                  <div className="text-white-dim mb-1">COASTAL</div>
+                  <div className="text-white">{(oceanData as any).valuation.annualEcosystemServices.breakdown.coastalProtection.formatted}</div>
+                </div>
+                <div className="border border-white p-2">
+                  <div className="text-white-dim mb-1">CARBON</div>
+                  <div className="text-white">{(oceanData as any).valuation.annualEcosystemServices.breakdown.carbonSequestration.formatted}</div>
+                </div>
+              </div>
+              <div className="mt-2 text-[10px] text-white-dim font-mono">
+                <span className="text-blue">&gt;</span> {(oceanData as any).valuation.analysisArea} • {(oceanData as any).valuation.methodology}
+              </div>
+            </div>
+          )}
+
           {/* Info panel */}
           <div className="border border-blue bg-code p-4">
             <div className="text-xs text-white-dim font-mono space-y-1">

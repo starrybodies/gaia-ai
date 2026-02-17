@@ -14,8 +14,20 @@ function getAQILevel(aqi: number): { level: string; description: string; color: 
   return { level: "Hazardous", description: "Emergency conditions", color: "#8B0000" };
 }
 
+// Calculate distance between two points in km (Haversine formula)
+function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371; // Earth's radius in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
 // Transform WAQI response to our format
-function transformWAQIData(data: any, city: string): AirQualityData {
+function transformWAQIData(data: any, city: string, distance?: number): AirQualityData {
   const aqi = data.aqi || 0;
   const aqiInfo = getAQILevel(aqi);
 
@@ -29,6 +41,7 @@ function transformWAQIData(data: any, city: string): AirQualityData {
         lat: data.city?.geo?.[0] || 0,
         lon: data.city?.geo?.[1] || 0,
       },
+      stationDistance: distance ? Math.round(distance) : undefined,
     },
     current: {
       aqi: aqi,
@@ -82,14 +95,14 @@ function transformWAQIData(data: any, city: string): AirQualityData {
 }
 
 // Mock data for demo mode
-function getMockAirQualityData(city: string): AirQualityData {
+function getMockAirQualityData(city: string, lat?: number, lon?: number): AirQualityData {
   const aqi = 42;
   const aqiInfo = getAQILevel(aqi);
 
   return {
     location: {
       name: city,
-      coordinates: { lat: 48.8167, lon: -123.5 },
+      coordinates: { lat: lat || 48.8167, lon: lon || -123.5 },
     },
     current: {
       aqi: aqi,
@@ -121,61 +134,144 @@ function getMockAirQualityData(city: string): AirQualityData {
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const city = searchParams.get("city") || "Salt Spring Island";
+  const latParam = searchParams.get("lat");
+  const lonParam = searchParams.get("lon");
+
+  const lat = latParam ? parseFloat(latParam) : undefined;
+  const lon = lonParam ? parseFloat(lonParam) : undefined;
 
   // If no API key, use mock data
   if (!WAQI_API_KEY) {
     console.log("[DEMO MODE] No WAQI API key, using mock data");
-    return NextResponse.json(getMockAirQualityData(city));
+    return NextResponse.json(getMockAirQualityData(city, lat, lon));
   }
 
   try {
-    // WAQI API - search by city name
-    const url = `${WAQI_BASE_URL}/feed/${encodeURIComponent(city)}/?token=${WAQI_API_KEY}`;
+    // If we have coordinates, use geo-based lookup first (most accurate)
+    if (lat !== undefined && lon !== undefined && !isNaN(lat) && !isNaN(lon)) {
+      console.log(`[WAQI API] Fetching air quality by coordinates (${lat.toFixed(4)}, ${lon.toFixed(4)})`);
 
-    console.log(`[WAQI API] Fetching air quality for ${city}`);
+      // WAQI geo endpoint returns nearest stations
+      const geoUrl = `${WAQI_BASE_URL}/feed/geo:${lat};${lon}/?token=${WAQI_API_KEY}`;
+
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
+
+      const response = await fetch(geoUrl, {
+        headers: { "Accept": "application/json" },
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+
+      if (response.ok) {
+        const result = await response.json();
+
+        if (result.status === "ok" && result.data && typeof result.data !== "string") {
+          // Calculate distance to the station
+          const stationLat = result.data.city?.geo?.[0];
+          const stationLon = result.data.city?.geo?.[1];
+          let distance: number | undefined;
+
+          if (stationLat && stationLon) {
+            distance = haversineDistance(lat, lon, stationLat, stationLon);
+
+            // Only use station if it's within 500km (reasonable for air quality)
+            if (distance > 500) {
+              console.log(`[WAQI API] Nearest station too far (${Math.round(distance)}km), using mock data`);
+              return NextResponse.json(getMockAirQualityData(city, lat, lon));
+            }
+          }
+
+          console.log(`[WAQI API] Found station: ${result.data.city?.name} (${distance ? Math.round(distance) + "km away" : "unknown distance"})`);
+          return NextResponse.json(transformWAQIData(result.data, city, distance));
+        }
+      }
+
+      // Geo lookup failed, try map bounds search
+      console.log(`[WAQI API] Geo lookup failed, trying bounds search`);
+
+      const bounds = 2; // Search within ~2 degrees
+      const mapUrl = `${WAQI_BASE_URL}/map/bounds/?latlng=${lat - bounds},${lon - bounds},${lat + bounds},${lon + bounds}&token=${WAQI_API_KEY}`;
+
+      const mapResponse = await fetch(mapUrl, {
+        headers: { "Accept": "application/json" },
+      });
+
+      if (mapResponse.ok) {
+        const mapResult = await mapResponse.json();
+
+        if (mapResult.status === "ok" && mapResult.data?.length > 0) {
+          // Find the nearest station
+          let nearestStation = mapResult.data[0];
+          let nearestDistance = Infinity;
+
+          for (const station of mapResult.data) {
+            const stationLat = station.lat;
+            const stationLon = station.lon;
+            if (stationLat && stationLon) {
+              const dist = haversineDistance(lat, lon, stationLat, stationLon);
+              if (dist < nearestDistance) {
+                nearestDistance = dist;
+                nearestStation = station;
+              }
+            }
+          }
+
+          // Get full data for the nearest station
+          const stationUrl = `${WAQI_BASE_URL}/feed/@${nearestStation.uid}/?token=${WAQI_API_KEY}`;
+          const stationResponse = await fetch(stationUrl);
+          const stationResult = await stationResponse.json();
+
+          if (stationResult.status === "ok" && stationResult.data) {
+            console.log(`[WAQI API] Found nearby station via bounds: ${stationResult.data.city?.name} (${Math.round(nearestDistance)}km)`);
+            return NextResponse.json(transformWAQIData(stationResult.data, city, nearestDistance));
+          }
+        }
+      }
+    }
+
+    // Fallback: Try city name search
+    console.log(`[WAQI API] Fetching air quality by name: ${city}`);
+    const url = `${WAQI_BASE_URL}/feed/${encodeURIComponent(city)}/?token=${WAQI_API_KEY}`;
 
     const response = await fetch(url, {
       headers: { "Accept": "application/json" },
     });
 
     if (!response.ok) {
-      console.log(`[DEMO MODE] WAQI API error ${response.status}, using mock data`);
-      return NextResponse.json(getMockAirQualityData(city));
+      console.log(`[WAQI API] API error ${response.status}, using mock data`);
+      return NextResponse.json(getMockAirQualityData(city, lat, lon));
     }
 
     const result = await response.json();
 
-    // WAQI returns { status: "ok", data: {...} } or { status: "error", data: "..." }
-    if (result.status !== "ok" || !result.data || typeof result.data === "string") {
-      console.log(`[WAQI API] No data for ${city}: ${result.data || "unknown error"}`);
+    if (result.status === "ok" && result.data && typeof result.data !== "string") {
+      // Verify the station is reasonably close if we have coordinates
+      if (lat !== undefined && lon !== undefined) {
+        const stationLat = result.data.city?.geo?.[0];
+        const stationLon = result.data.city?.geo?.[1];
 
-      // Try searching for nearest station instead
-      const geoUrl = `${WAQI_BASE_URL}/search/?keyword=${encodeURIComponent(city)}&token=${WAQI_API_KEY}`;
-      const geoResponse = await fetch(geoUrl);
-      const geoResult = await geoResponse.json();
-
-      if (geoResult.status === "ok" && geoResult.data?.length > 0) {
-        // Get data from first matching station
-        const stationId = geoResult.data[0].uid;
-        const stationUrl = `${WAQI_BASE_URL}/feed/@${stationId}/?token=${WAQI_API_KEY}`;
-        const stationResponse = await fetch(stationUrl);
-        const stationResult = await stationResponse.json();
-
-        if (stationResult.status === "ok" && stationResult.data) {
-          console.log(`[WAQI API] Found nearby station: ${stationResult.data.city?.name}`);
-          return NextResponse.json(transformWAQIData(stationResult.data, city));
+        if (stationLat && stationLon) {
+          const distance = haversineDistance(lat, lon, stationLat, stationLon);
+          if (distance > 500) {
+            console.log(`[WAQI API] Station "${result.data.city?.name}" too far (${Math.round(distance)}km), using mock data`);
+            return NextResponse.json(getMockAirQualityData(city, lat, lon));
+          }
+          return NextResponse.json(transformWAQIData(result.data, city, distance));
         }
       }
-
-      console.log(`[DEMO MODE] No WAQI stations near ${city}, using mock data`);
-      return NextResponse.json(getMockAirQualityData(city));
+      return NextResponse.json(transformWAQIData(result.data, city));
     }
 
-    return NextResponse.json(transformWAQIData(result.data, city));
+    console.log(`[WAQI API] No data for ${city}, using mock data`);
+    return NextResponse.json(getMockAirQualityData(city, lat, lon));
 
   } catch (error) {
-    console.error("WAQI API error:", error);
-    console.log("[DEMO MODE FALLBACK] Using mock air quality data");
-    return NextResponse.json(getMockAirQualityData(city));
+    if (error instanceof Error && error.name === "AbortError") {
+      console.log("[WAQI API] Request timeout, using mock data");
+    } else {
+      console.error("[WAQI API] Error:", error);
+    }
+    return NextResponse.json(getMockAirQualityData(city, lat, lon));
   }
 }

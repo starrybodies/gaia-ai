@@ -220,6 +220,46 @@ export default function CarbonWidget({
             </ResponsiveContainer>
           </div>
 
+          {/* Natural Capital Valuation */}
+          {(data as any).valuation && (
+            <div className="border-2 border-blue bg-code p-4 mb-6">
+              <div className="text-blue uppercase text-xs tracking-widest mb-3 font-mono font-bold">
+                <span className="text-white">$$</span> CARBON_ECONOMICS
+              </div>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div className="border border-white p-3">
+                  <div className="text-white-dim uppercase mb-1 text-[10px]">NATURAL_CAPITAL</div>
+                  <div className="text-blue text-xl font-bold">{(data as any).valuation.naturalCapital.totalSequestrationValueFormatted}</div>
+                  <div className="text-[10px] text-white-dim">CARBON STOCK VALUE</div>
+                </div>
+                <div className="border border-white p-3">
+                  <div className="text-white-dim uppercase mb-1 text-[10px]">EMISSIONS_COST</div>
+                  <div className="text-orange text-xl font-bold">{(data as any).valuation.emissionsCost.socialCostFormatted}</div>
+                  <div className="text-[10px] text-white-dim">SOCIAL COST/YR</div>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-[10px] font-mono">
+                <div className="border border-white p-2">
+                  <div className="text-white-dim mb-1">FOREST_C</div>
+                  <div className="text-white">{(data as any).valuation.naturalCapital.forestCarbonValueFormatted}</div>
+                </div>
+                <div className="border border-white p-2">
+                  <div className="text-white-dim mb-1">SOIL_C</div>
+                  <div className="text-white">{(data as any).valuation.naturalCapital.soilCarbonValueFormatted}</div>
+                </div>
+                <div className="border border-white p-2">
+                  <div className={`text-white-dim mb-1 ${(data as any).valuation.netPosition.isPositive ? 'text-blue' : 'text-orange'}`}>NET</div>
+                  <div className={`${(data as any).valuation.netPosition.isPositive ? 'text-blue' : 'text-orange'}`}>
+                    {(data as any).valuation.netPosition.status}
+                  </div>
+                </div>
+              </div>
+              <div className="mt-2 text-[10px] text-white-dim font-mono">
+                <span className="text-blue">&gt;</span> CARBON_PRICE: ${(data as any).valuation.carbonPricing.voluntaryMarket}/t (Voluntary) • ${(data as any).valuation.carbonPricing.socialCost}/t (Social Cost)
+              </div>
+            </div>
+          )}
+
           {/* Info panel */}
           <div className="border border-blue bg-code p-3">
             <div className="text-xs text-white-dim font-mono space-y-1">

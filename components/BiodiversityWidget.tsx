@@ -16,12 +16,22 @@ const BiodiversityMap = dynamic(() => import("./BiodiversityMap"), {
   ),
 });
 
-export default function BiodiversityWidget() {
+interface BiodiversityWidgetProps {
+  defaultLocation?: string;
+  defaultLat?: number;
+  defaultLon?: number;
+}
+
+export default function BiodiversityWidget({
+  defaultLocation = "Salt Spring Island, BC",
+  defaultLat = 48.8167,
+  defaultLon = -123.5,
+}: BiodiversityWidgetProps) {
   const [bioData, setBioData] = useState<BiodiversityData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [location, setLocation] = useState("Salt Spring Island, BC");
-  const [coordinates, setCoordinates] = useState({ lat: 48.8167, lon: -123.5 });
+  const [location, setLocation] = useState(defaultLocation);
+  const [coordinates, setCoordinates] = useState({ lat: defaultLat, lon: defaultLon });
 
   const fetchBiodiversityData = async (locationName: string, lat: number, lon: number) => {
     setLoading(true);
@@ -201,6 +211,44 @@ export default function BiodiversityWidget() {
               ))}
             </div>
           </div>
+
+          {/* Natural Capital Valuation */}
+          {(bioData as any).valuation && (
+            <div className="border-2 border-blue bg-code p-4 mb-6">
+              <div className="text-blue uppercase text-xs tracking-widest mb-3 font-mono font-bold">
+                <span className="text-white">$$</span> BIODIVERSITY_VALUE
+              </div>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div className="border border-white p-3">
+                  <div className="text-white-dim uppercase mb-1 text-[10px]">ANNUAL_TOTAL</div>
+                  <div className="text-blue text-xl font-bold">{(bioData as any).valuation.naturalCapital.annualTotalFormatted}</div>
+                  <div className="text-[10px] text-white-dim">ECOSYSTEM SERVICES</div>
+                </div>
+                <div className="border border-white p-3">
+                  <div className="text-white-dim uppercase mb-1 text-[10px]">EXTINCTION_RISK</div>
+                  <div className="text-orange text-xl font-bold">{(bioData as any).valuation.extinctionRisk.potentialLossValueFormatted}</div>
+                  <div className="text-[10px] text-white-dim">{(bioData as any).valuation.extinctionRisk.atRiskSpecies} SPECIES AT RISK</div>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-[10px] font-mono">
+                <div className="border border-white p-2">
+                  <div className="text-white-dim mb-1">EXISTENCE</div>
+                  <div className="text-white">{(bioData as any).valuation.annualEcosystemServices.breakdown.existenceValue.formatted}</div>
+                </div>
+                <div className="border border-white p-2">
+                  <div className="text-white-dim mb-1">GENETIC</div>
+                  <div className="text-white">{(bioData as any).valuation.annualEcosystemServices.breakdown.geneticResources.formatted}</div>
+                </div>
+                <div className="border border-white p-2">
+                  <div className="text-white-dim mb-1">POLLINAT</div>
+                  <div className="text-white">{(bioData as any).valuation.annualEcosystemServices.breakdown.pollination.formatted}</div>
+                </div>
+              </div>
+              <div className="mt-2 text-[10px] text-white-dim font-mono">
+                <span className="text-blue">&gt;</span> {(bioData as any).valuation.analysisArea} • {(bioData as any).valuation.methodology}
+              </div>
+            </div>
+          )}
 
           {/* Kingdom Distribution */}
           <div className="border border-blue bg-code p-4">

@@ -13,18 +13,18 @@ interface DashboardLayoutProps {
   onLayoutChange?: (layouts: Layouts) => void;
 }
 
-// Default layouts for different breakpoints
+// Default layouts for different breakpoints - increased heights for better spacing
 const generateDefaultLayouts = (widgetIds: string[]): Layouts => {
   const lgLayout: Layout[] = [
-    { i: "weather", x: 0, y: 0, w: 6, h: 8, minW: 4, minH: 6 },
-    { i: "airquality", x: 6, y: 0, w: 6, h: 8, minW: 4, minH: 6 },
-    { i: "climate", x: 0, y: 8, w: 12, h: 10, minW: 6, minH: 8 },
-    { i: "satellite", x: 0, y: 18, w: 6, h: 10, minW: 4, minH: 8 },
-    { i: "carbon", x: 6, y: 18, w: 6, h: 10, minW: 4, minH: 8 },
-    { i: "soil", x: 0, y: 28, w: 6, h: 10, minW: 4, minH: 8 },
-    { i: "deforestation", x: 6, y: 28, w: 6, h: 10, minW: 4, minH: 8 },
-    { i: "biodiversity", x: 0, y: 38, w: 12, h: 12, minW: 6, minH: 10 },
-    { i: "ocean", x: 0, y: 50, w: 12, h: 10, minW: 6, minH: 8 },
+    { i: "weather", x: 0, y: 0, w: 6, h: 14, minW: 4, minH: 10 },
+    { i: "airquality", x: 6, y: 0, w: 6, h: 14, minW: 4, minH: 10 },
+    { i: "climate", x: 0, y: 14, w: 12, h: 16, minW: 6, minH: 12 },
+    { i: "satellite", x: 0, y: 30, w: 6, h: 16, minW: 4, minH: 12 },
+    { i: "carbon", x: 6, y: 30, w: 6, h: 18, minW: 4, minH: 12 },
+    { i: "soil", x: 0, y: 46, w: 6, h: 18, minW: 4, minH: 12 },
+    { i: "deforestation", x: 6, y: 46, w: 6, h: 20, minW: 4, minH: 12 },
+    { i: "biodiversity", x: 0, y: 66, w: 12, h: 22, minW: 6, minH: 14 },
+    { i: "ocean", x: 0, y: 88, w: 12, h: 18, minW: 6, minH: 12 },
   ].filter(l => widgetIds.includes(l.i));
 
   const mdLayout: Layout[] = lgLayout.map(l => ({
@@ -140,13 +140,13 @@ export default function DashboardLayout({
         layouts={layouts}
         breakpoints={{ lg: 1200, md: 996, sm: 768 }}
         cols={{ lg: 12, md: 10, sm: 6 }}
-        rowHeight={30}
+        rowHeight={28}
         onLayoutChange={handleLayoutChange}
         isDraggable={isEditing}
         isResizable={isEditing}
         draggableHandle=".widget-drag-handle"
         containerPadding={[0, 0]}
-        margin={[16, 16]}
+        margin={[24, 24]}
       >
         {children.map((child, idx) => (
           <div

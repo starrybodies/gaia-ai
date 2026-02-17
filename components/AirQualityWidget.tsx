@@ -4,20 +4,33 @@ import { useEffect, useState } from "react";
 import type { AirQualityData } from "@/types/airquality";
 import { Gauge, HorizontalBars } from "./visualizations";
 
-export default function AirQualityWidget() {
+interface AirQualityWidgetProps {
+  defaultLocation?: string;
+  defaultLat?: number;
+  defaultLon?: number;
+}
+
+export default function AirQualityWidget({
+  defaultLocation = "Salt Spring Island",
+  defaultLat = 48.8167,
+  defaultLon = -123.5,
+}: AirQualityWidgetProps) {
   const [airQuality, setAirQuality] = useState<AirQualityData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [city, setCity] = useState("Salt Spring Island");
+  const [city, setCity] = useState(defaultLocation);
+  const [coords, setCoords] = useState({ lat: defaultLat, lon: defaultLon });
 
-  const fetchAirQuality = async (cityName: string) => {
+  const fetchAirQuality = async (cityName: string, lat?: number, lon?: number) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(
-        `/api/airquality?city=${encodeURIComponent(cityName)}`
-      );
+      let url = `/api/airquality?city=${encodeURIComponent(cityName)}`;
+      if (lat !== undefined && lon !== undefined) {
+        url += `&lat=${lat}&lon=${lon}`;
+      }
+      const response = await fetch(url);
 
       if (!response.ok) {
         throw new Error("Failed to fetch air quality data");
@@ -33,7 +46,7 @@ export default function AirQualityWidget() {
   };
 
   useEffect(() => {
-    fetchAirQuality(city);
+    fetchAirQuality(city, coords.lat, coords.lon);
   }, []);
 
   const handleCityChange = (e: React.FormEvent<HTMLFormElement>) => {
@@ -42,6 +55,8 @@ export default function AirQualityWidget() {
     const newCity = formData.get("city") as string;
     if (newCity.trim()) {
       setCity(newCity);
+      // Clear coords when manually entering a city - let API geocode it
+      setCoords({ lat: undefined as any, lon: undefined as any });
       fetchAirQuality(newCity);
     }
   };

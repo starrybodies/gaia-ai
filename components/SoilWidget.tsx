@@ -227,6 +227,45 @@ export default function SoilWidget({
             </div>
           </div>
 
+          {/* Natural Capital Valuation */}
+          {(data as any).valuation && (
+            <div className="border-2 border-blue bg-code p-4 mb-6">
+              <div className="text-blue uppercase text-xs tracking-widest mb-3 font-mono font-bold">
+                <span className="text-white">$$</span> NATURAL_CAPITAL_VALUE
+              </div>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div className="border border-white p-3">
+                  <div className="text-white-dim uppercase mb-1 text-[10px]">CARBON_STOCK</div>
+                  <div className="text-blue text-xl font-bold">{(data as any).valuation.naturalCapital.carbonStockFormatted}</div>
+                  <div className="text-[10px] text-white-dim">{(data as any).valuation.naturalCapital.carbonTonnes?.toLocaleString() || 0} TONNES</div>
+                </div>
+                <div className="border border-white p-3">
+                  <div className="text-white-dim uppercase mb-1 text-[10px]">ANNUAL_SERVICES</div>
+                  <div className="text-blue text-xl font-bold">{(data as any).valuation.annualEcosystemServices.totalFormatted}</div>
+                  <div className="text-[10px] text-white-dim">PER YEAR</div>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-[10px] font-mono">
+                <div className="border border-white p-2">
+                  <div className="text-white-dim mb-1">FOOD_PROD</div>
+                  <div className="text-white">{(data as any).valuation.annualEcosystemServices.breakdown.foodProduction.formatted}</div>
+                </div>
+                <div className="border border-white p-2">
+                  <div className="text-white-dim mb-1">WATER</div>
+                  <div className="text-white">{(data as any).valuation.annualEcosystemServices.breakdown.waterFiltration.formatted}</div>
+                </div>
+                <div className="border border-white p-2">
+                  <div className="text-white-dim mb-1">CARBON</div>
+                  <div className="text-white">{(data as any).valuation.annualEcosystemServices.breakdown.carbonStorage.formatted}</div>
+                </div>
+              </div>
+              <div className="mt-3 pt-2 border-t border-white flex justify-between text-[10px] font-mono">
+                <span className="text-orange"><span className="text-white">&gt;</span> DEGRADATION_RISK: {(data as any).valuation.degradation.annualCostFormatted}/yr</span>
+                <span className="text-blue"><span className="text-white">&gt;</span> RESTORATION: +{(data as any).valuation.restoration.potentialFormatted}</span>
+              </div>
+            </div>
+          )}
+
           {/* Info panel */}
           <div className="border border-blue bg-code p-3">
             <div className="text-xs text-white-dim font-mono space-y-1">
