@@ -7,7 +7,11 @@ const pool = new Pool({
   connectionTimeoutMillis: 2000,
 });
 
-export async function query(text: string, params: unknown[]) {
+pool.on('error', (err) => {
+  console.error('Unexpected idle DB client error', err);
+});
+
+export async function query(text: string, params?: unknown[]) {
   const start = Date.now();
   const res = await pool.query(text, params);
   const duration = Date.now() - start;

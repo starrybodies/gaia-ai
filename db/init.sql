@@ -32,6 +32,11 @@ CREATE TABLE IF NOT EXISTS sensor_readings (
     h3_resolution5 VARCHAR(20)
 );
 SELECT create_hypertable('sensor_readings', 'time', if_not_exists => TRUE);
+ALTER TABLE sensor_readings SET (
+  timescaledb.compress,
+  timescaledb.compress_orderby = 'time DESC',
+  timescaledb.compress_segmentby = 'sensor_id'
+);
 SELECT add_compression_policy('sensor_readings', INTERVAL '7 days', if_not_exists => TRUE);
 
 -- EVS (Ecosystem Vitality Score) per ecoregion
@@ -80,8 +85,15 @@ CREATE TABLE IF NOT EXISTS document_embeddings (
 );
 CREATE INDEX IF NOT EXISTS doc_location_idx ON document_embeddings USING GIST (location);
 CREATE INDEX IF NOT EXISTS doc_source_tier_idx ON document_embeddings (source_tier, created_at DESC);
+CREATE INDEX IF NOT EXISTS doc_embedding_idx ON document_embeddings
+  USING hnsw (embedding vector_cosine_ops);
 
 -- Retention policies
 SELECT add_retention_policy('sensor_readings', INTERVAL '2 years', if_not_exists => TRUE);
 SELECT add_retention_policy('events', INTERVAL '5 years', if_not_exists => TRUE);
+ALTER TABLE events SET (
+  timescaledb.compress,
+  timescaledb.compress_orderby = 'time DESC',
+  timescaledb.compress_segmentby = 'event_type'
+);
 SELECT add_compression_policy('events', INTERVAL '30 days', if_not_exists => TRUE);
