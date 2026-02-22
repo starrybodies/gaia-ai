@@ -1,0 +1,10 @@
+dagster>=1.9
+dagster-postgres
+dagster-webserver
+psycopg2-binary
+requests
+h3>=4.1
+numpy
+scipy
+anthropic
+redis

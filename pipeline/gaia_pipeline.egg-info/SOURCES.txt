@@ -1,0 +1,12 @@
+pyproject.toml
+gaia_pipeline/__init__.py
+gaia_pipeline/resources.py
+gaia_pipeline.egg-info/PKG-INFO
+gaia_pipeline.egg-info/SOURCES.txt
+gaia_pipeline.egg-info/dependency_links.txt
+gaia_pipeline.egg-info/requires.txt
+gaia_pipeline.egg-info/top_level.txt
+gaia_pipeline/assets/__init__.py
+gaia_pipeline/assets/fires.py
+gaia_pipeline/convergence/__init__.py
+tests/test_firms_ingestion.py
