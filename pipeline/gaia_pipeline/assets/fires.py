@@ -6,6 +6,7 @@ import h3
 import requests
 from datetime import datetime, timezone
 from dagster import asset, get_dagster_logger
+from gaia_pipeline.resources import DatabaseResource, RedisResource
 
 FIRMS_MAP_KEY = os.getenv("FIRMS_MAP_KEY", "")
 
@@ -74,7 +75,7 @@ def normalize_fire_event(raw: dict) -> dict:
     description="Ingest near-real-time fire detections from NASA FIRMS VIIRS",
     group_name="fires",
 )
-def nasa_fires_asset(context, db, redis) -> dict:
+def nasa_fires_asset(context, db: DatabaseResource, redis: RedisResource) -> dict:
     logger = get_dagster_logger()
 
     url = f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_NOAA20_NRT/-180,-90,180,90/1"
@@ -101,7 +102,7 @@ def nasa_fires_asset(context, db, redis) -> dict:
                 json.dumps({'brightness': event['brightness'], 'frp': event['frp']}),
                 event['confidence'],
             ))
-            inserted += 1
+            inserted += cur.rowcount
     conn.commit()
     conn.close()
 

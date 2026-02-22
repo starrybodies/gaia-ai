@@ -23,3 +23,7 @@ def test_normalize_assigns_severity_correctly():
     critical = normalize_fire_event({'lat': 0, 'lon': 0, 'brightness': 380, 'confidence': 0.95})
     assert low['severity'] == 'LOW'
     assert critical['severity'] == 'CRITICAL'
+    medium = normalize_fire_event({'lat': 0, 'lon': 0, 'brightness': 315, 'confidence': 0.6})
+    high = normalize_fire_event({'lat': 0, 'lon': 0, 'brightness': 335, 'confidence': 0.7})
+    assert medium['severity'] == 'MEDIUM'
+    assert high['severity'] == 'HIGH'
