@@ -16,8 +16,9 @@ export function buildFireLayer(events: FireEvent[]) {
     getPosition: (d: FireEvent) => [d.lon, d.lat],
     getRadius: (d: FireEvent) => Math.max(500, d.brightness * 10),
     getFillColor: (d: FireEvent) => {
-      const alpha = Math.floor(d.confidence * 255);
-      return [255, Math.floor(100 - d.confidence * 80), 0, alpha];
+      const c = Math.min(1, Math.max(0, d.confidence));
+      const alpha = Math.floor(c * 255);
+      return [255, Math.floor(100 - c * 80), 0, alpha];
     },
     radiusMinPixels: 2,
     radiusMaxPixels: 20,

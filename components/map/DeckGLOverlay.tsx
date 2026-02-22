@@ -23,7 +23,6 @@ export function DeckGLOverlay({ map, layers, onHover, onClick }: DeckGLOverlayPr
     if (!map) return;
 
     const canvas = document.createElement('canvas');
-    canvas.id = 'deck-canvas';
     canvas.style.position = 'absolute';
     canvas.style.inset = '0';
     canvas.style.pointerEvents = 'none';
@@ -42,7 +41,6 @@ export function DeckGLOverlay({ map, layers, onHover, onClick }: DeckGLOverlayPr
         zoom: map.getZoom(),
       },
       controller: false,
-      layers,
       onHover: (info) => onHoverRef.current?.(info as { object?: unknown }),
       onClick: (info) => onClickRef.current?.(info as { object?: unknown }),
     });
