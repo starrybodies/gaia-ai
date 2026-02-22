@@ -44,7 +44,7 @@ export async function buildSpatialContext(
   }
 
   return result.rows
-    .map((row, i) => `[Source ${i + 1}: ${row.source} (Tier ${row.source_tier})]\n${row.content}`)
+    .map((row, i) => `[Source ${i + 1}: ${row.source} (Tier ${row.source_tier ?? 'unknown'})]\n${row.content}`)
     .join('\n\n---\n\n');
 }
 

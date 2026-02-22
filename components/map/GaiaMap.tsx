@@ -6,6 +6,7 @@ import { GaiaMapBase } from './GaiaMapBase';
 import { DeckGLOverlay } from './DeckGLOverlay';
 import { buildFireLayer } from './layers/FireLayer';
 import { buildConvergenceLayer } from './layers/ConvergenceLayer';
+import { buildEventsVectorLayer } from './layers/VectorTileLayer';
 import { LayerControls } from './LayerControls';
 import type { Viewport } from './types';
 
@@ -46,12 +47,12 @@ export function GaiaMap({ onLocationSelect }: GaiaMapProps) {
     setLayerVisibility(prev => ({ ...prev, [id]: !prev[id as keyof typeof prev] }));
   }, []);
 
-  const layerDefs = [
+  const layerDefs = useMemo(() => [
     { id: 'fire', label: 'Fire Detection', visible: layerVisibility.fire, color: '#FF6400' },
     { id: 'deforestation', label: 'Deforestation', visible: layerVisibility.deforestation, color: '#8B5A2B' },
     { id: 'convergence', label: 'Convergence Alerts', visible: layerVisibility.convergence, color: '#FF0000' },
     { id: 'airQuality', label: 'Air Quality', visible: layerVisibility.airQuality, color: '#00A7E1' },
-  ];
+  ], [layerVisibility]);
 
   const abortRef = useRef<AbortController | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -100,6 +101,7 @@ export function GaiaMap({ onLocationSelect }: GaiaMapProps) {
   const layers = useMemo(() => {
     const result = [];
     if (layerVisibility.fire) result.push(buildFireLayer(fireEvents));
+    if (layerVisibility.deforestation) result.push(buildEventsVectorLayer('deforestation'));
     if (layerVisibility.convergence) result.push(buildConvergenceLayer(convergenceAlerts));
     return result;
   }, [fireEvents, convergenceAlerts, layerVisibility]);

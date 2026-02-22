@@ -23,6 +23,11 @@ export async function POST(request: NextRequest) {
     return new Response('Missing lat or lon', { status: 400 });
   }
 
+  if (typeof lat !== 'number' || typeof lon !== 'number' ||
+      lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+    return new Response('Invalid lat/lon values', { status: 400 });
+  }
+
   // Get nearby convergence alerts for context
   let alertSummary = 'No active convergence alerts';
   try {
@@ -32,20 +37,23 @@ export async function POST(request: NextRequest) {
         .map(a => `${a.severity} alert (CI=${a.ci_score.toFixed(1)}): ${a.signal_types.join(', ')}`)
         .join('; ');
     }
-  } catch {
-    // DB unavailable — proceed with no alert context
+  } catch (error) {
+    console.error('[briefing] Failed to fetch convergence alerts:', error);
   }
 
   // Fetch spatial news context
-  const activeSignals = signalTypes.length > 0 ? signalTypes : ['fire', 'deforestation', 'biodiversity'];
+  const ALLOWED_SIGNAL_TYPES = new Set(['fire', 'deforestation', 'biodiversity', 'flood', 'drought']);
+  const activeSignals = (signalTypes.length > 0 ? signalTypes : ['fire', 'deforestation', 'biodiversity'])
+    .filter((s: string) => ALLOWED_SIGNAL_TYPES.has(s))
+    .slice(0, 10);
   let newsContext = 'No recent news context available.';
   try {
     newsContext = await buildSpatialContext(
       { lat, lon, name: locationName },
       activeSignals
     );
-  } catch {
-    // DB unavailable — proceed with no news context
+  } catch (error) {
+    console.error('[briefing] Failed to fetch spatial context:', error);
   }
 
   const prompt = formatBriefingPrompt(
@@ -57,10 +65,11 @@ export async function POST(request: NextRequest) {
 
   // Stream response via SSE
   const encoder = new TextEncoder();
+  let claudeStream: ReturnType<typeof anthropic.messages.stream> | undefined;
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        const claudeStream = anthropic.messages.stream({
+        claudeStream = anthropic.messages.stream({
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 1024,
           messages: [{ role: 'user', content: prompt }],
@@ -85,6 +94,9 @@ export async function POST(request: NextRequest) {
         );
         controller.close();
       }
+    },
+    cancel() {
+      claudeStream?.abort?.();
     },
   });
 
