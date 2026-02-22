@@ -29,6 +29,10 @@ export function GaiaMapBase({
 }: GaiaMapBaseProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
+  const onViewportChangeRef = useRef(onViewportChange);
+  const onMapClickRef = useRef(onMapClick);
+  onViewportChangeRef.current = onViewportChange;
+  onMapClickRef.current = onMapClick;
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -50,7 +54,7 @@ export function GaiaMapBase({
 
     map.on('moveend', () => {
       const center = map.getCenter();
-      onViewportChange?.({
+      onViewportChangeRef.current?.({
         latitude: center.lat,
         longitude: center.lng,
         zoom: map.getZoom(),
@@ -60,7 +64,7 @@ export function GaiaMapBase({
     });
 
     map.on('click', (e) => {
-      onMapClick?.(e.lngLat.lat, e.lngLat.lng);
+      onMapClickRef.current?.(e.lngLat.lat, e.lngLat.lng);
     });
 
     mapRef.current = map;
