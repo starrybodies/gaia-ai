@@ -46,3 +46,7 @@ def test_convergence_engine_get_active_alerts():
     assert len(alerts) == 1
     assert alerts[0]['h3_cell'] == '851fb467fffffff'
     assert alerts[0]['ci_score'] > 0
+
+def test_classify_severity_none():
+    assert classify_severity(n_signal_types=1, ci=2.0, persistence_days=1) == 'NONE'
+    assert classify_severity(n_signal_types=0, ci=0.0, persistence_days=0) == 'NONE'

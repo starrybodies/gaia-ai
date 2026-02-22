@@ -40,19 +40,23 @@ def compute_convergence_index(
     if not signal_zscores:
         return 0.0
 
-    n_signals = len(signal_zscores)
+    # Only use positive z-scores for all calculations (weighted sum, diversity, profiles)
+    positive_signals = {s: z for s, z in signal_zscores.items() if z > 0}
+    if not positive_signals:
+        return 0.0
+
+    n_signals = len(positive_signals)
     diversity_bonus = 1.0 + 0.2 * (n_signals - 1)
 
     weighted_sum = sum(
         weights.get(signal, 0.01) * z
-        for signal, z in signal_zscores.items()
-        if z > 0
+        for signal, z in positive_signals.items()
     )
 
     ci = weighted_sum * diversity_bonus
 
     if apply_threat_profiles:
-        active_signals = set(signal_zscores.keys())
+        active_signals = set(positive_signals.keys())
         best_multiplier = 1.0
         best_profile = None
         for required_signals, multiplier, label in THREAT_PROFILES:
@@ -79,7 +83,7 @@ def classify_severity(
         return 'EMERGENCY'
     if n_signal_types >= 3 and ci >= 10.0:
         return 'CRITICAL'
-    if (n_signal_types >= 3 and ci >= 5.0 and persistence_days > 14) or ci >= 10.0:
+    if (n_signal_types >= 3 and ci >= 5.0 and persistence_days > 14) or (n_signal_types < 3 and ci >= 10.0):
         return 'WARNING'
     if n_signal_types >= 2:
         return 'WATCH'
