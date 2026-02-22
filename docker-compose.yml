@@ -17,5 +17,26 @@ services:
       timeout: 5s
       retries: 10
 
+  martin:
+    image: ghcr.io/maplibre/martin:v0.13
+    environment:
+      DATABASE_URL: postgresql://gaia:gaialocal@gaia-db:5432/gaiaai
+    ports:
+      - "3002:3000"
+    volumes:
+      - ./martin/config.yaml:/config.yaml
+    command: ["--config", "/config.yaml"]
+    depends_on:
+      gaia-db:
+        condition: service_healthy
+
+  titiler:
+    image: ghcr.io/developmentseed/titiler:latest
+    environment:
+      PORT: "8008"
+      WORKERS_PER_CORE: "1"
+    ports:
+      - "8008:8008"
+
 volumes:
   gaia_pgdata:

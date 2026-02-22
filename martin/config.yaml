@@ -1,0 +1,35 @@
+# Martin v0.13 configuration
+listen_addresses:
+  - 0.0.0.0:3000
+
+postgres:
+  connection_string: ${DATABASE_URL}
+  pool_size: 20
+
+tables:
+  events_recent:
+    schema: public
+    table: events
+    srid: 4326
+    geometry_column: location
+    geometry_type: POINT
+    properties:
+      - id
+      - event_type
+      - severity
+      - confidence
+      - h3_resolution5
+
+  convergence_alerts_active:
+    schema: public
+    table: convergence_alerts
+    srid: 4326
+    geometry_column: affected_area
+    geometry_type: POLYGON
+    properties:
+      - id
+      - severity
+      - ci_score
+      - threat_profile
+      - signal_types
+      - status
