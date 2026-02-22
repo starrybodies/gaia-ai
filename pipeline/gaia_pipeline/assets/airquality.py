@@ -36,9 +36,12 @@ def parse_openaq_response(response: dict) -> list[dict]:
         lon = coords.get('longitude')
         if lat is None or lon is None:
             continue
+        sensor_id = result.get('id')
+        if sensor_id is None:
+            continue
         for measurement in result.get('measurements', []):
             readings.append({
-                'sensor_id': result.get('id'),
+                'sensor_id': int(sensor_id),
                 'name': result.get('name'),
                 'lat': lat,
                 'lon': lon,

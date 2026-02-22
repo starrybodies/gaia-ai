@@ -23,7 +23,7 @@ tables:
 
   convergence_alerts_active:
     schema: public
-    table: convergence_alerts
+    table: convergence_alerts_active_view
     srid: 4326
     geometry_column: affected_area
     geometry_type: POLYGON

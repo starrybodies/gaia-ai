@@ -17,7 +17,8 @@ export async function POST(request: NextRequest) {
     return new Response('Invalid JSON body', { status: 400 });
   }
 
-  const { lat, lon, locationName, signalTypes = [] } = body;
+  const { lat, lon, locationName: locationNameRaw, signalTypes = [] } = body;
+  const locationName = locationNameRaw?.slice(0, 100);
 
   if (lat === undefined || lon === undefined) {
     return new Response('Missing lat or lon', { status: 400 });

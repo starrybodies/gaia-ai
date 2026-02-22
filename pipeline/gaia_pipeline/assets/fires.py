@@ -93,7 +93,7 @@ def nasa_fires_asset(context, db: DatabaseResource, redis: RedisResource) -> dic
                 cur.execute("""
                     INSERT INTO events (time, event_type, severity, location, h3_resolution5, properties, source, confidence)
                     VALUES (%s, 'fire', %s, ST_MakePoint(%s, %s)::geometry, %s, %s::jsonb, 'NASA_FIRMS', %s)
-                    ON CONFLICT DO NOTHING
+                    ON CONFLICT (source, h3_resolution5, time) WHERE h3_resolution5 IS NOT NULL DO NOTHING
                 """, (
                     event['timestamp'],
                     event['severity'],

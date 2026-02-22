@@ -19,6 +19,9 @@ CREATE TABLE IF NOT EXISTS events (
 SELECT create_hypertable('events', 'time', if_not_exists => TRUE);
 CREATE INDEX IF NOT EXISTS events_location_idx ON events USING GIST (location);
 CREATE INDEX IF NOT EXISTS events_type_time_idx ON events (event_type, time DESC);
+-- Deduplication index: same source + same H3 cell + same acquisition time = duplicate
+CREATE UNIQUE INDEX IF NOT EXISTS events_dedup_idx ON events (source, h3_resolution5, time)
+  WHERE h3_resolution5 IS NOT NULL;
 
 -- Sensor readings (air quality, SST, water levels)
 CREATE TABLE IF NOT EXISTS sensor_readings (
@@ -87,6 +90,13 @@ CREATE INDEX IF NOT EXISTS doc_location_idx ON document_embeddings USING GIST (l
 CREATE INDEX IF NOT EXISTS doc_source_tier_idx ON document_embeddings (source_tier, created_at DESC);
 CREATE INDEX IF NOT EXISTS doc_embedding_idx ON document_embeddings
   USING hnsw (embedding vector_cosine_ops);
+
+-- View for Martin: only active convergence alerts (excludes resolved/false_positive)
+CREATE OR REPLACE VIEW convergence_alerts_active_view AS
+  SELECT id, time, severity, ci_score, threat_profile, h3_cells,
+         affected_area, signal_types, signal_z_scores, status
+  FROM convergence_alerts
+  WHERE status = 'active';
 
 -- Retention policies
 SELECT add_retention_policy('sensor_readings', INTERVAL '2 years', if_not_exists => TRUE);

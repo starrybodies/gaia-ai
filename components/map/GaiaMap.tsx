@@ -86,12 +86,14 @@ export function GaiaMap({ onLocationSelect }: GaiaMapProps) {
       .then(data => {
         if (data?.alerts) {
           setConvergenceAlerts(
-            data.alerts.map((a: { ci_score: number; lat: number; lon: number; h3_cells?: string[] }) => ({
-              h3Index: a.h3_cells?.[0] ?? '',
-              ci: a.ci_score,
-              lat: a.lat ?? 0,
-              lon: a.lon ?? 0,
-            }))
+            data.alerts
+              .filter((a: { lat: number | null; lon: number | null }) => a.lat != null && a.lon != null)
+              .map((a: { ci_score: number; lat: number; lon: number; h3_cells?: string[] }) => ({
+                h3Index: a.h3_cells?.[0] ?? '',
+                ci: a.ci_score,
+                lat: a.lat,
+                lon: a.lon,
+              }))
           );
         }
       })
