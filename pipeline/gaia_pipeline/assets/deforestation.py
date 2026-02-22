@@ -77,25 +77,30 @@ def gfw_alerts_asset(context, db: DatabaseResource) -> dict:
 
     conn = db.get_connection()
     inserted = 0
-    with conn.cursor() as cur:
-        for e in events:
-            severity = classify_alert_severity(e['alert_count'], e['area_ha'], e['confidence'])
-            h3_index = h3.latlng_to_cell(e['lat'], e['lon'], 5)
-            confidence_val = 1.0 if e['confidence'] == 'high' else 0.6 if e['confidence'] == 'medium' else 0.3
-            cur.execute("""
-                INSERT INTO events (time, event_type, severity, location, h3_resolution5, properties, source, confidence)
-                VALUES (%s, 'deforestation', %s, ST_MakePoint(%s, %s)::geometry, %s, %s::jsonb, 'GFW', %s)
-            """, (
-                datetime.now(timezone.utc),
-                severity,
-                e['lon'], e['lat'],
-                h3_index,
-                json.dumps({'alert_count': e['alert_count'], 'area_ha': e['area_ha']}),
-                confidence_val,
-            ))
-            inserted += cur.rowcount
-    conn.commit()
-    conn.close()
+    try:
+        with conn.cursor() as cur:
+            for e in events:
+                severity = classify_alert_severity(e['alert_count'], e['area_ha'], e['confidence'])
+                h3_index = h3.latlng_to_cell(e['lat'], e['lon'], 5)
+                confidence_val = 1.0 if e['confidence'] == 'high' else 0.6 if e['confidence'] == 'medium' else 0.3
+                cur.execute("""
+                    INSERT INTO events (time, event_type, severity, location, h3_resolution5, properties, source, confidence)
+                    VALUES (%s, 'deforestation', %s, ST_MakePoint(%s, %s)::geometry, %s, %s::jsonb, 'GFW', %s)
+                """, (
+                    datetime.now(timezone.utc),
+                    severity,
+                    e['lon'], e['lat'],
+                    h3_index,
+                    json.dumps({'alert_count': e['alert_count'], 'area_ha': e['area_ha']}),
+                    confidence_val,
+                ))
+                inserted += cur.rowcount
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
 
     logger.info(f"Ingested {inserted} deforestation alerts from GFW")
     return {"inserted": inserted}
