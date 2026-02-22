@@ -19,6 +19,7 @@ tables:
       - severity
       - confidence
       - h3_resolution5
+      - properties
 
   convergence_alerts_active:
     schema: public

@@ -39,7 +39,8 @@ def test_aggregate_evs_score():
         'air_quality': 0.08,
     }
     overall = aggregate_evs_score(components, weights)
-    assert 0 <= overall <= 100
+    # (70×0.15 + 60×0.10 + 80×0.12 + 90×0.08) / (0.15+0.10+0.12+0.08) = 33.3/0.45 = 74.0
+    assert abs(overall - 74.0) < 0.001
 
 def test_assign_confidence_grade_A():
     assert assign_confidence_grade(direct_indicators=9, total_indicators=10) == 'A'

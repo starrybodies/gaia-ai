@@ -63,6 +63,10 @@ def evs_computation_asset(context, db: DatabaseResource) -> dict:
     """
     logger = get_dagster_logger()
 
+    # Stable per-run timestamp: truncate to the hour so ON CONFLICT correctly
+    # upserts the same cell within a single run window instead of inserting duplicates.
+    computation_time = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
+
     conn = None
     computed = 0
     try:
@@ -105,7 +109,7 @@ def evs_computation_asset(context, db: DatabaseResource) -> dict:
                         components = EXCLUDED.components,
                         confidence_grade = EXCLUDED.confidence_grade
                 """, (
-                    datetime.now(timezone.utc),
+                    computation_time,
                     h3_cell,
                     overall,
                     json.dumps(components),

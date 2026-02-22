@@ -39,6 +39,7 @@ export function GaiaMap({ onLocationSelect }: GaiaMapProps) {
     fire: true,
     deforestation: true,
     convergence: true,
+    airQuality: false,
   });
 
   const toggleLayer = useCallback((id: string) => {
@@ -49,6 +50,7 @@ export function GaiaMap({ onLocationSelect }: GaiaMapProps) {
     { id: 'fire', label: 'Fire Detection', visible: layerVisibility.fire, color: '#FF6400' },
     { id: 'deforestation', label: 'Deforestation', visible: layerVisibility.deforestation, color: '#8B5A2B' },
     { id: 'convergence', label: 'Convergence Alerts', visible: layerVisibility.convergence, color: '#FF0000' },
+    { id: 'airQuality', label: 'Air Quality', visible: layerVisibility.airQuality, color: '#00A7E1' },
   ];
 
   const abortRef = useRef<AbortController | null>(null);
