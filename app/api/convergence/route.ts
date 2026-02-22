@@ -6,8 +6,11 @@ export const revalidate = 0;
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const minSeverity = searchParams.get('min_severity') ?? 'WATCH';
-  const limit = Math.min(parseInt(searchParams.get('limit') ?? '100', 10), 500);
+  const VALID_SEVERITIES = ['WATCH', 'WARNING', 'CRITICAL', 'EMERGENCY'] as const;
+  const rawSeverity = searchParams.get('min_severity') ?? 'WATCH';
+  const minSeverity = (VALID_SEVERITIES as readonly string[]).includes(rawSeverity) ? rawSeverity : 'WATCH';
+  const rawLimit = parseInt(searchParams.get('limit') ?? '100', 10);
+  const limit = Math.min(isNaN(rawLimit) ? 100 : rawLimit, 500);
 
   try {
     const alerts = await getActiveConvergenceAlerts(minSeverity, limit);

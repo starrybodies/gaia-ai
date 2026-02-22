@@ -5,8 +5,10 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const lat = parseFloat(searchParams.get('lat') ?? '0');
-  const lon = parseFloat(searchParams.get('lon') ?? '0');
+  const latParam = searchParams.get('lat');
+  const lonParam = searchParams.get('lon');
+  const lat = latParam !== null ? parseFloat(latParam) : undefined;
+  const lon = lonParam !== null ? parseFloat(lonParam) : undefined;
   const radius = parseInt(searchParams.get('radius') ?? '500', 10);
   const hours = parseInt(searchParams.get('hours') ?? '24', 10);
 

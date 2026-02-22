@@ -57,7 +57,7 @@ export async function getRecentEvents(
               ST_Y(location) as lat, ST_X(location) as lon, h3_resolution5
        FROM events
        WHERE event_type = $1
-         AND time > NOW() - ($2 || ' hours')::INTERVAL
+         AND time > NOW() - ($2 * INTERVAL '1 hour')
          AND ST_DWithin(
            location::geography,
            ST_MakePoint($3, $4)::geography,
@@ -74,7 +74,7 @@ export async function getRecentEvents(
             ST_Y(location) as lat, ST_X(location) as lon, h3_resolution5
      FROM events
      WHERE event_type = $1
-       AND time > NOW() - ($2 || ' hours')::INTERVAL
+       AND time > NOW() - ($2 * INTERVAL '1 hour')
      ORDER BY time DESC LIMIT 1000`,
     [eventType, hours]
   );
