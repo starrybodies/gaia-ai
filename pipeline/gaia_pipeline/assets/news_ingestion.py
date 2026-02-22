@@ -62,7 +62,9 @@ def parse_rss_feed(xml_text: str, source_name: str, source_tier: int) -> list:
                 'source_tier': source_tier,
                 'content': f"{title}\n\n{desc}",
             })
-    except ET.ParseError:
+    except ET.ParseError as e:
+        import logging
+        logging.getLogger(__name__).warning(f"Failed to parse RSS XML: {e}")
         pass
     return articles
 
@@ -77,10 +79,11 @@ def news_embedding_asset(context, db: DatabaseResource) -> dict:
 
     logger = get_dagster_logger()
 
-    conn = db.get_connection()
+    conn = None
     embedded = 0
 
     try:
+        conn = db.get_connection()
         for source_name, (feed_url, tier) in NEWS_SOURCES.items():
             try:
                 resp = requests.get(feed_url, timeout=15)
@@ -89,6 +92,9 @@ def news_embedding_asset(context, db: DatabaseResource) -> dict:
 
                 for article in articles[:10]:
                     content = article['content'][:4000]
+                    if not article['url']:
+                        logger.warning(f"Skipping article with no URL from {source_name}: {article['title'][:80]}")
+                        continue
                     event_types = extract_event_types(content)
                     content_hash = hashlib.sha256(content.encode()).hexdigest()
 
@@ -122,8 +128,10 @@ def news_embedding_asset(context, db: DatabaseResource) -> dict:
                 conn.rollback()
                 logger.warning(f"Failed to ingest {source_name}: {e}")
                 continue
+        logger.info(f"Stored {embedded} new news articles")
+        return {"embedded": embedded}
+    except Exception:
+        raise
     finally:
-        conn.close()
-
-    logger.info(f"Stored {embedded} new news articles")
-    return {"embedded": embedded}
+        if conn is not None:
+            conn.close()
