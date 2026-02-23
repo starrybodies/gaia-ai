@@ -8,7 +8,7 @@ interface SectionHeaderProps {
   onToggle?: () => void;
 }
 
-const STATUS_VAR: Record<string, string> = {
+const STATUS_VAR: Record<Status, string> = {
   nominal:   'var(--nominal)',
   watch:     'var(--watch)',
   warning:   'var(--warning)',
