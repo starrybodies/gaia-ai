@@ -14,7 +14,6 @@ interface GaiaMapProps {
     fire: boolean;
     deforestation: boolean;
     convergence: boolean;
-    airQuality: boolean;
   };
   onLocationSelect?: (lat: number, lon: number) => void;
 }
@@ -111,7 +110,15 @@ export function GaiaMap({ layerVisibility, onLocationSelect }: GaiaMapProps) {
         onHover={(info) => setHoveredFeature(info.object ?? null)}
       />
       {Boolean(hoveredFeature) && (
-        <div className="absolute bottom-8 left-4 bg-black/80 text-white text-xs p-2 rounded font-mono pointer-events-none max-w-xs overflow-auto">
+        <div
+          className="absolute bottom-8 left-4 text-xs p-2 rounded pointer-events-none max-w-xs overflow-auto"
+          style={{
+            background: "var(--bg-raised)",
+            color: "var(--text-2)",
+            border: "1px solid var(--border-1)",
+            fontFamily: "var(--font-data)",
+          }}
+        >
           <pre>{JSON.stringify(hoveredFeature, null, 2)}</pre>
         </div>
       )}

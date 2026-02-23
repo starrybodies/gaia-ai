@@ -12,7 +12,6 @@ const LAYER_DEFS = [
   { id: "fire",          label: "Fire Detection",     color: "#f97316", icon: "🔥" },
   { id: "deforestation", label: "Deforestation",      color: "#22c55e", icon: "🌿" },
   { id: "convergence",   label: "Convergence Alerts", color: "#ef4444", icon: "⚡" },
-  { id: "airQuality",    label: "Air Quality",        color: "#06b6d4", icon: "🌫️" },
 ];
 
 interface FocusedRegion {
@@ -26,7 +25,6 @@ export function MapShell() {
     fire: true,
     deforestation: true,
     convergence: true,
-    airQuality: false,
   });
 
   const [focusedRegion, setFocusedRegion] = useState<FocusedRegion | null>(null);
