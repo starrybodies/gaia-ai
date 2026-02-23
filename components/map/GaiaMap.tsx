@@ -7,10 +7,15 @@ import { DeckGLOverlay } from './DeckGLOverlay';
 import { buildFireLayer } from './layers/FireLayer';
 import { buildConvergenceLayer } from './layers/ConvergenceLayer';
 import { buildEventsVectorLayer } from './layers/VectorTileLayer';
-import { LayerControls } from './LayerControls';
 import type { Viewport } from './types';
 
 interface GaiaMapProps {
+  layerVisibility: {
+    fire: boolean;
+    deforestation: boolean;
+    convergence: boolean;
+    airQuality: boolean;
+  };
   onLocationSelect?: (lat: number, lon: number) => void;
 }
 
@@ -30,29 +35,11 @@ interface ConvergenceAlert {
   lon: number;
 }
 
-export function GaiaMap({ onLocationSelect }: GaiaMapProps) {
+export function GaiaMap({ layerVisibility, onLocationSelect }: GaiaMapProps) {
   const [map, setMap] = useState<maplibregl.Map | null>(null);
   const [fireEvents, setFireEvents] = useState<FireEvent[]>([]);
   const [convergenceAlerts, setConvergenceAlerts] = useState<ConvergenceAlert[]>([]);
   const [hoveredFeature, setHoveredFeature] = useState<unknown>(null);
-
-  const [layerVisibility, setLayerVisibility] = useState({
-    fire: true,
-    deforestation: true,
-    convergence: true,
-    airQuality: false,
-  });
-
-  const toggleLayer = useCallback((id: string) => {
-    setLayerVisibility(prev => ({ ...prev, [id]: !prev[id as keyof typeof prev] }));
-  }, []);
-
-  const layerDefs = useMemo(() => [
-    { id: 'fire', label: 'Fire Detection', visible: layerVisibility.fire, color: '#FF6400' },
-    { id: 'deforestation', label: 'Deforestation', visible: layerVisibility.deforestation, color: '#8B5A2B' },
-    { id: 'convergence', label: 'Convergence Alerts', visible: layerVisibility.convergence, color: '#FF0000' },
-    { id: 'airQuality', label: 'Air Quality', visible: layerVisibility.airQuality, color: '#00A7E1' },
-  ], [layerVisibility]);
 
   const abortRef = useRef<AbortController | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -123,7 +110,6 @@ export function GaiaMap({ onLocationSelect }: GaiaMapProps) {
         layers={layers}
         onHover={(info) => setHoveredFeature(info.object ?? null)}
       />
-      <LayerControls layers={layerDefs} onToggle={toggleLayer} />
       {Boolean(hoveredFeature) && (
         <div className="absolute bottom-8 left-4 bg-black/80 text-white text-xs p-2 rounded font-mono pointer-events-none max-w-xs overflow-auto">
           <pre>{JSON.stringify(hoveredFeature, null, 2)}</pre>
