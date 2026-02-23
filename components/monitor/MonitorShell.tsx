@@ -41,7 +41,7 @@ export function MonitorShell() {
         <div className="flex-1 relative overflow-hidden">
           <GaiaMap
             layerVisibility={LAYER_VISIBILITY}
-            onLocationSelect={(lat, lon) => openRegion(lat, lon)}
+            onLocationSelect={openRegion}
           />
         </div>
 
