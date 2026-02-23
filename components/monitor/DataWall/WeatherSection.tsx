@@ -11,8 +11,9 @@ export function WeatherSection({ lat, lon }: WeatherSectionProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const controller = new AbortController();
     setLoading(true);
-    fetch(`/api/weather?lat=${lat}&lon=${lon}`)
+    fetch(`/api/weather?lat=${lat}&lon=${lon}`, { signal: controller.signal })
       .then(r => r.ok ? r.json() : null)
       .then(json => {
         if (json) {
@@ -26,7 +27,10 @@ export function WeatherSection({ lat, lon }: WeatherSectionProps) {
         }
         setLoading(false);
       })
-      .catch(() => { setLoading(false); });
+      .catch(e => {
+        if (e.name !== 'AbortError') setLoading(false);
+      });
+    return () => controller.abort();
   }, [lat, lon]);
 
   return (

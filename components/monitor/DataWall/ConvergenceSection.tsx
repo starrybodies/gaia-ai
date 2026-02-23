@@ -23,6 +23,8 @@ export function ConvergenceSection({ lat, lon }: ConvergenceSectionProps) {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // lat/lon intentionally omitted — convergence API does not support location filtering
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setLoading(true);
     fetch('/api/convergence?min_severity=WATCH&limit=100')
@@ -32,9 +34,12 @@ export function ConvergenceSection({ lat, lon }: ConvergenceSectionProps) {
         setLoading(false);
       })
       .catch(() => { setLoading(false); });
-  }, [lat, lon]);
+  }, []);
 
   const topSev = alerts[0]?.severity.toLowerCase() as any;
+
+  // suppress unused-vars warning — props exist for parent compatibility
+  void lat; void lon;
 
   return (
     <div className="px-3 py-2" style={{ borderBottom: '1px solid var(--border)' }}>

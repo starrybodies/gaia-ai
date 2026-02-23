@@ -59,7 +59,7 @@ export function BriefingSection({ lat, lon }: BriefingSectionProps) {
         status={loading ? 'loading' : text ? 'nominal' : undefined}
         collapsible
         collapsed={collapsed}
-        onToggle={collapsed ? expand : () => setCollapsed(true)}
+        onToggle={collapsed ? expand : () => { abortRef.current?.abort(); setCollapsed(true); }}
       />
       {!collapsed && (
         <div className="mt-2">

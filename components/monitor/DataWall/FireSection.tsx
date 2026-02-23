@@ -9,10 +9,12 @@ interface FireSectionProps { lat: number; lon: number; }
 export function FireSection({ lat, lon }: FireSectionProps) {
   const [data, setData] = useState<{ count: number; maxBrightness: number; maxFrp: number; severity: string } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
     setLoading(true);
-    fetch(`/api/fires?lat=${lat}&lon=${lon}&radius=200`)
+    fetch(`/api/fires?lat=${lat}&lon=${lon}&radius=200`, { signal: controller.signal })
       .then(r => r.ok ? r.json() : null)
       .then(json => {
         if (json?.events && json.events.length > 0) {
@@ -28,16 +30,23 @@ export function FireSection({ lat, lon }: FireSectionProps) {
         } else {
           setData({ count: 0, maxBrightness: 0, maxFrp: 0, severity: 'NONE' });
         }
+        setLoaded(true);
         setLoading(false);
       })
-      .catch(() => { setLoading(false); });
+      .catch(e => {
+        if (e.name !== 'AbortError') {
+          setLoaded(true);
+          setLoading(false);
+        }
+      });
+    return () => controller.abort();
   }, [lat, lon]);
 
-  const status = !data ? 'loading'
+  const status = !loaded ? 'loading'
+    : !data || data.count === 0 ? 'nominal'
     : data.severity === 'CRITICAL' ? 'critical'
     : data.severity === 'HIGH' ? 'warning'
-    : data.count > 0 ? 'watch'
-    : 'nominal';
+    : 'watch';
 
   return (
     <div className="px-3 py-2" style={{ borderBottom: '1px solid var(--border)' }}>

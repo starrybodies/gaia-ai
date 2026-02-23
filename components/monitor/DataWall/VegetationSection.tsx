@@ -9,21 +9,31 @@ interface VegetationSectionProps { lat: number; lon: number; }
 export function VegetationSection({ lat, lon }: VegetationSectionProps) {
   const [data, setData] = useState<{ ndvi: number; evi: number; canopy: number } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
     setLoading(true);
-    fetch(`/api/satellite?lat=${lat}&lon=${lon}`)
+    fetch(`/api/satellite?lat=${lat}&lon=${lon}`, { signal: controller.signal })
       .then(r => r.ok ? r.json() : null)
       .then(json => {
         if (json?.ndvi !== undefined) {
           setData({ ndvi: json.ndvi, evi: json.evi ?? 0, canopy: json.forestCover ?? json.canopy ?? 0 });
         }
+        setLoaded(true);
         setLoading(false);
       })
-      .catch(() => { setLoading(false); });
+      .catch(e => {
+        if (e.name !== 'AbortError') {
+          setLoaded(true);
+          setLoading(false);
+        }
+      });
+    return () => controller.abort();
   }, [lat, lon]);
 
-  const ndviStatus = !data ? 'loading'
+  const ndviStatus = !loaded ? 'loading'
+    : !data ? 'nominal'
     : data.ndvi > 0.6 ? 'nominal'
     : data.ndvi > 0.4 ? 'watch'
     : data.ndvi > 0.2 ? 'warning'
