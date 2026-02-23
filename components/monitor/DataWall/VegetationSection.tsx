@@ -6,6 +6,8 @@ import { SectionHeader } from "../SectionHeader";
 
 interface VegetationSectionProps { lat: number; lon: number; }
 
+type Status = 'nominal' | 'watch' | 'warning' | 'critical' | 'emergency' | 'loading';
+
 export function VegetationSection({ lat, lon }: VegetationSectionProps) {
   const [data, setData] = useState<{ ndvi: number; evi: number; canopy: number } | null>(null);
   const [loading, setLoading] = useState(true);
@@ -32,7 +34,7 @@ export function VegetationSection({ lat, lon }: VegetationSectionProps) {
     return () => controller.abort();
   }, [lat, lon]);
 
-  const ndviStatus = !loaded ? 'loading'
+  const ndviStatus: Status = !loaded ? 'loading'
     : !data ? 'nominal'
     : data.ndvi > 0.6 ? 'nominal'
     : data.ndvi > 0.4 ? 'watch'
@@ -41,7 +43,7 @@ export function VegetationSection({ lat, lon }: VegetationSectionProps) {
 
   return (
     <div className="px-3 py-2" style={{ borderBottom: '1px solid var(--border)' }}>
-      <SectionHeader label="VEGETATION" status={ndviStatus as any} />
+      <SectionHeader label="VEGETATION" status={ndviStatus !== 'loading' ? ndviStatus : undefined} />
       {loading ? (
         <div className="space-y-1 mt-1">
           {[60, 50, 70].map((w, i) => (
@@ -50,7 +52,7 @@ export function VegetationSection({ lat, lon }: VegetationSectionProps) {
         </div>
       ) : (
         <div className="mt-1 space-y-0.5">
-          <MetricRow label="NDVI"   value={data?.ndvi != null ? data.ndvi.toFixed(2) : '—'} status={ndviStatus as any} />
+          <MetricRow label="NDVI"   value={data?.ndvi != null ? data.ndvi.toFixed(2) : '—'} status={ndviStatus !== 'loading' ? ndviStatus : undefined} />
           <MetricRow label="EVI"    value={data?.evi != null ? data.evi.toFixed(2) : '—'} />
           <MetricRow label="Canopy" value={data?.canopy != null ? data.canopy.toFixed(0) : '—'} unit="%" />
         </div>

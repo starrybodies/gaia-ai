@@ -6,6 +6,8 @@ import { SectionHeader } from "../SectionHeader";
 
 interface AirQualitySectionProps { lat: number; lon: number; }
 
+type Status = 'nominal' | 'watch' | 'warning' | 'critical' | 'emergency' | 'loading';
+
 export function AirQualitySection({ lat, lon }: AirQualitySectionProps) {
   const [data, setData] = useState<{ aqi: number; pm25: number; pm10: number; no2: number } | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,7 +39,7 @@ export function AirQualitySection({ lat, lon }: AirQualitySectionProps) {
     return () => controller.abort();
   }, [lat, lon]);
 
-  const aqiStatus = !loaded ? 'loading'
+  const aqiStatus: Status = !loaded ? 'loading'
     : !data ? 'nominal'
     : data.aqi <= 50 ? 'nominal'
     : data.aqi <= 100 ? 'watch'
@@ -46,7 +48,7 @@ export function AirQualitySection({ lat, lon }: AirQualitySectionProps) {
 
   return (
     <div className="px-3 py-2" style={{ borderBottom: '1px solid var(--border)' }}>
-      <SectionHeader label="AIR QUALITY" status={aqiStatus as any} />
+      <SectionHeader label="AIR QUALITY" status={aqiStatus !== 'loading' ? aqiStatus : undefined} />
       {loading ? (
         <div className="space-y-1 mt-1">
           {[70, 50, 65, 55].map((w, i) => (
@@ -55,7 +57,7 @@ export function AirQualitySection({ lat, lon }: AirQualitySectionProps) {
         </div>
       ) : (
         <div className="mt-1 space-y-0.5">
-          <MetricRow label="AQI"   value={data?.aqi ?? '—'} status={aqiStatus as any} />
+          <MetricRow label="AQI"   value={data?.aqi ?? '—'} status={aqiStatus !== 'loading' ? aqiStatus : undefined} />
           <MetricRow label="PM2.5" value={data?.pm25 ? data.pm25.toFixed(1) : '—'} unit="μg/m³" />
           <MetricRow label="PM10"  value={data?.pm10 ? data.pm10.toFixed(1) : '—'} unit="μg/m³" />
           <MetricRow label="NO₂"   value={data?.no2 ? data.no2.toFixed(1) : '—'} unit="μg/m³" />

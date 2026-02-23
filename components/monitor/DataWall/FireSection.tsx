@@ -6,6 +6,8 @@ import { SectionHeader } from "../SectionHeader";
 
 interface FireSectionProps { lat: number; lon: number; }
 
+type Status = 'nominal' | 'watch' | 'warning' | 'critical' | 'emergency' | 'loading';
+
 export function FireSection({ lat, lon }: FireSectionProps) {
   const [data, setData] = useState<{ count: number; maxBrightness: number; maxFrp: number; severity: string } | null>(null);
   const [loading, setLoading] = useState(true);
@@ -42,7 +44,7 @@ export function FireSection({ lat, lon }: FireSectionProps) {
     return () => controller.abort();
   }, [lat, lon]);
 
-  const status = !loaded ? 'loading'
+  const status: Status = !loaded ? 'loading'
     : !data || data.count === 0 ? 'nominal'
     : data.severity === 'CRITICAL' ? 'critical'
     : data.severity === 'HIGH' ? 'warning'
@@ -50,7 +52,7 @@ export function FireSection({ lat, lon }: FireSectionProps) {
 
   return (
     <div className="px-3 py-2" style={{ borderBottom: '1px solid var(--border)' }}>
-      <SectionHeader label="FIRE" status={status as any} />
+      <SectionHeader label="FIRE" status={status !== 'loading' ? status : undefined} />
       {loading ? (
         <div className="space-y-1 mt-1">
           {[60, 80, 70].map((w, i) => (
@@ -62,7 +64,7 @@ export function FireSection({ lat, lon }: FireSectionProps) {
           <MetricRow label="Detections" value={data?.count ?? 0} />
           <MetricRow label="Max Brightness" value={data?.maxBrightness ? data.maxBrightness.toFixed(0) : '—'} unit="K" />
           <MetricRow label="Max FRP" value={data?.maxFrp ? data.maxFrp.toFixed(1) : '—'} unit="MW" />
-          <MetricRow label="Severity" value={data?.severity ?? '—'} status={status as any} />
+          <MetricRow label="Severity" value={data?.severity ?? '—'} status={status !== 'loading' ? status : undefined} />
         </div>
       )}
     </div>

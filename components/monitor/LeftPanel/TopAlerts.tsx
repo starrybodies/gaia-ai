@@ -51,13 +51,9 @@ export function TopAlerts({ onAlertClick }: TopAlertsProps) {
           const color = SEV_COLOR[alert.severity] ?? 'var(--watch)';
           const minsAgo = Math.max(0, Math.round((Date.now() - new Date(alert.time).getTime()) / 60_000));
           const clickable = alert.lat != null && alert.lon != null;
-          return (
-            <button
-              key={alert.id}
-              onClick={() => clickable && onAlertClick(alert.lat!, alert.lon!)}
-              className="w-full text-left space-y-0.5"
-              style={{ cursor: clickable ? 'pointer' : 'default' }}
-            >
+
+          const inner = (
+            <>
               <div className="flex items-center gap-1.5">
                 <span className="text-[10px]" style={{ color }}>■</span>
                 <span className="text-[10px] font-medium" style={{ color, fontFamily: 'var(--font-data)' }}>
@@ -70,8 +66,21 @@ export function TopAlerts({ onAlertClick }: TopAlertsProps) {
               <div className="text-[10px] pl-4" style={{ color: 'var(--text-2)', fontFamily: 'var(--font-data)' }}>
                 CI={alert.ci_score.toFixed(1)} · {alert.signal_types.slice(0, 2).join(', ')}
               </div>
-            </button>
+            </>
           );
+
+          if (clickable) {
+            return (
+              <button
+                key={alert.id}
+                onClick={() => onAlertClick(alert.lat!, alert.lon!)}
+                className="w-full text-left space-y-0.5"
+              >
+                {inner}
+              </button>
+            );
+          }
+          return <div key={alert.id} className="space-y-0.5">{inner}</div>;
         })}
       </div>
     </div>

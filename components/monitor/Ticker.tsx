@@ -78,20 +78,33 @@ export function Ticker({ onAlertClick }: TickerProps) {
               hour: '2-digit', minute: '2-digit', hour12: false,
             });
             const clickable = alert.lat != null && alert.lon != null;
+
+            if (clickable) {
+              return (
+                <button
+                  key={`${alert.id}-${i < alerts.length ? 'a' : 'b'}`}
+                  onClick={() => onAlertClick(alert.lat!, alert.lon!)}
+                  className="flex items-center gap-2 text-[11px]"
+                  style={{ cursor: 'pointer', color: 'var(--text-2)' }}
+                >
+                  <span style={{ color }}>{t} ■{alert.severity}</span>
+                  <span className="tabular-nums" style={{ color: 'var(--text-1)' }}>CI={alert.ci_score.toFixed(1)}</span>
+                  <span style={{ color: 'var(--text-3)' }}>{alert.signal_types.join(', ')}</span>
+                  <span style={{ color: 'var(--text-3)' }}>·</span>
+                </button>
+              );
+            }
             return (
-              <button
+              <span
                 key={`${alert.id}-${i < alerts.length ? 'a' : 'b'}`}
-                onClick={() => clickable && onAlertClick(alert.lat!, alert.lon!)}
                 className="flex items-center gap-2 text-[11px]"
-                style={{ cursor: clickable ? 'pointer' : 'default', color: 'var(--text-2)' }}
+                style={{ color: 'var(--text-2)' }}
               >
                 <span style={{ color }}>{t} ■{alert.severity}</span>
-                <span className="tabular-nums" style={{ color: 'var(--text-1)' }}>
-                  CI={alert.ci_score.toFixed(1)}
-                </span>
+                <span className="tabular-nums" style={{ color: 'var(--text-1)' }}>CI={alert.ci_score.toFixed(1)}</span>
                 <span style={{ color: 'var(--text-3)' }}>{alert.signal_types.join(', ')}</span>
                 <span style={{ color: 'var(--text-3)' }}>·</span>
-              </button>
+              </span>
             );
           })}
         </div>

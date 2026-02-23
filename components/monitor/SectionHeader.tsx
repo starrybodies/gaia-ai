@@ -24,6 +24,7 @@ export function SectionHeader({ label, status, collapsible, collapsed, onToggle 
     return (
       <button
         onClick={onToggle}
+        aria-expanded={!collapsed}
         className="flex items-center gap-2 w-full py-1.5"
       >
         <span className="text-[10px]" style={{ color: statusColor }}>■</span>
