@@ -49,7 +49,7 @@ export function TopAlerts({ onAlertClick }: TopAlertsProps) {
         )}
         {alerts.map(alert => {
           const color = SEV_COLOR[alert.severity] ?? 'var(--watch)';
-          const minsAgo = Math.round((Date.now() - new Date(alert.time).getTime()) / 60_000);
+          const minsAgo = Math.max(0, Math.round((Date.now() - new Date(alert.time).getTime()) / 60_000));
           const clickable = alert.lat != null && alert.lon != null;
           return (
             <button

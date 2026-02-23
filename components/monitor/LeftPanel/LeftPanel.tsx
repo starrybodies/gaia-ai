@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { ActiveEvents } from "./ActiveEvents";
 import { TopAlerts } from "./TopAlerts";
 
@@ -8,6 +9,12 @@ interface LeftPanelProps {
 }
 
 export function LeftPanel({ onAlertClick }: LeftPanelProps) {
+  const [utc, setUtc] = useState(() => new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC');
+  useEffect(() => {
+    const id = setInterval(() => setUtc(new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC'), 1000);
+    return () => clearInterval(id);
+  }, []);
+
   return (
     <div
       className="w-[280px] shrink-0 flex flex-col overflow-y-auto"
@@ -25,7 +32,7 @@ export function LeftPanel({ onAlertClick }: LeftPanelProps) {
           className="text-[10px] tabular-nums mt-0.5"
           style={{ color: 'var(--text-3)', fontFamily: 'var(--font-data)' }}
         >
-          {new Date().toUTCString().slice(0, 16)} UTC
+          {utc}
         </div>
       </div>
 
