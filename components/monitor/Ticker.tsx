@@ -67,7 +67,8 @@ export function Ticker({ onAlertClick }: TickerProps) {
         <div
           className="flex gap-8 whitespace-nowrap"
           style={{
-            animation: paused ? 'none' : 'ticker-scroll 80s linear infinite',
+            animation: 'ticker-scroll 80s linear infinite',
+            animationPlayState: paused ? 'paused' : 'running',
             fontFamily: 'var(--font-data)',
           }}
         >
@@ -79,7 +80,7 @@ export function Ticker({ onAlertClick }: TickerProps) {
             const clickable = alert.lat != null && alert.lon != null;
             return (
               <button
-                key={i}
+                key={`${alert.id}-${i < alerts.length ? 'a' : 'b'}`}
                 onClick={() => clickable && onAlertClick(alert.lat!, alert.lon!)}
                 className="flex items-center gap-2 text-[11px]"
                 style={{ cursor: clickable ? 'pointer' : 'default', color: 'var(--text-2)' }}
